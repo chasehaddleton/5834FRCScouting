@@ -19,8 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 			}
 		}
 
-		print_r($user->exists());
-
 		errorResponse("Error, bad login or user does not exist.", 3);
 
 	} else {

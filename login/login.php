@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 			$_SESSION['fullName'] = $user->fullName;
 			$_SESSION['level'] = $user->level;
 			$_SESSION['userId'] = $user->userId;
+			$_SESSION['teamNumber'] = $user->teamNumber;
 
 			error_log("Login | Session thinks ID is: " . $_SESSION['userId']);
 

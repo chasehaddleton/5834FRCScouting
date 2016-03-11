@@ -116,7 +116,7 @@ if (!empty($_POST)) {
 	$pass = $_POST['password'];
 	$hash = password_hash($pass, PASSWORD_DEFAULT);
 
-	$query = "INSERT INTO " . $dbPrefix . "Users (fullName, email, teamnumber, password) VALUES (:name, :email, :teamNumber, :password)";
+	$query = "INSERT INTO Users (fullName, email, teamnumber, password) VALUES (:name, :email, :teamNumber, :password)";
 	$query_params = array(':name' => htmlspecialchars($_POST['name']), ':email' => htmlspecialchars($_POST['email']), ':teamNumber' => intVal($_POST['teamNumber']), ':password' => $hash);
 	
 	try {

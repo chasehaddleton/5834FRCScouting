@@ -8,6 +8,7 @@ require_once("Settings.php");
  */
 class Users {
 	private static $API_KEY_PEPPER = "@(*TRYU(HNSDF*(1324{}:>{}AF1";
+	public $userId;
 	public $fullName;
 	public $key;
 	protected $userData = array();
@@ -17,7 +18,7 @@ class Users {
 	public function __construct($id) {
 		$setting = new Settings();
 
-		$query = (is_numeric($id)) ? "SELECT * FROM " . $setting->getDbPrefix() . "Users WHERE id = :id" : "SELECT * FROM " . $setting->getDbPrefix() . "Users WHERE UCASE(email) = UCASE(:id)";
+		$query = (is_numeric($id)) ? "SELECT * FROM Users WHERE id = :id" : "SELECT * FROM Users WHERE UCASE(email) = UCASE(:id)";
 		$query_params = array(':id' => $id);
 
 		$stmt = executeSQL($query, $query_params);
@@ -28,12 +29,13 @@ class Users {
 		}
 
 		$this->fullName = $this->userData['fullName'];
+		$this->userId = $this->userData['userId'];
 	}
 
 	public function getAPIKey() {
 		$setting = new Settings();
 
-		$query = "SELECT apiKey FROM " . $setting->getDbPrefix() . "APIKey WHERE userId = :userId";
+		$query = "SELECT apiKey FROM APIKey WHERE userId = :userId";
 		$query_params = array(':userId' => $this->userData['userId']);
 
 		$stmt = executeSQL($query, $query_params);
@@ -54,7 +56,7 @@ class Users {
 
 		$key = hash_hmac("sha512", $this->userData['userId'] . $this->userData['teamNumber'], $this->userData['email'] . static::$API_KEY_PEPPER);
 
-		$query = "INSERT INTO " . $setting->getDbPrefix() . "APIKey (apiKey, userId, creationDate) VALUES (:apiKey, :userId, :curDate)";
+		$query = "INSERT INTO APIKey (apiKey, userId, creationDate) VALUES (:apiKey, :userId, :curDate)";
 		$query_params = array(":apiKey" => $key, ":userId" => $this->userData['userId'], ":curDate" => date('Y-m-d G:i:s'));
 
 		executeSQL($query, $query_params);
@@ -88,7 +90,7 @@ class Users {
 	public function delete() {
 		$setting = new Settings();
 
-		$query = "DELETE FROM " . $setting->getDbPrefix() . "Users WHERE id = :id";
+		$query = "DELETE FROM Users WHERE id = :id";
 		$query_params = array(':id' => $this->userData['id']);
 
 		executeSQL($query, $query_params);

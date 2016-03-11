@@ -39,7 +39,11 @@ function printNav() {
 			    <ul class="menu">
 			        <li><a href="#">Scout</a></li>
 			        <li><a href="#">Analyze</a></li>
-			        <li><a href="$appURL/login/">Login</a></li>
+EOF;
+	if (!isset($_SESSION['userId'])) {
+		$out .= "<li><a href=\"$appURL/login/\">Login</a></li>";
+	}
+	$out .= <<<EOF
 			    </ul>
 			 </div>
 		</div>
@@ -76,11 +80,23 @@ EOF;
 }
 
 function verifyPermission($userLevel, $requiredLevel) {
+	$setting = new Settings();
+
 	if ($userLevel < $requiredLevel) {
 		$_SESSION['errorMsg'] = "You are not authorized to be here, please sign in.";
-		header("Location: /login/");
+		redirect($setting->getAppURL() . "/login/");
 		die("Unauthorized");
 	}
+}
+
+function verifyAuthKey($authKey, $userId) {
+	$setting = new Settings();
+
+	$query = "SELECT 1 FROM APIKey WHERE authKey = :authKey AND userId = :userId";
+	$query_params = array(":authKey" => $authKey, ":userId" => $userId);
+
+	$stmt = executeSQL($query, $query_params);
+
 }
 
 function redirect($url, $statusCode = 303) {
@@ -97,9 +113,7 @@ function redirect($url, $statusCode = 303) {
  * @return void
  */
 function logMessage($message, $userId, $severity = 0) {
-	$setting = new Settings();
-
-	$query = "INSERT INTO " . $setting->getDbPrefix() . "Logs (logTime, message, userId, ip, severity) VALUES (:logTime, :message, :userId, :ip, :severity)";
+	$query = "INSERT INTO Logs (logTime, message, userId, ip, severity) VALUES (:logTime, :message, :userId, :ip, :severity)";
 	$query_params = array(':logTime' => date('Y-m-d G:i:s'), 'message' => htmlspecialchars($message), ':userId' => $userId, ':ip' => $_SERVER['REMOTE_ADDR'], ':severity' => $severity);
 
 	executeSQL($query, $query_params);
@@ -114,6 +128,16 @@ function logMessage($message, $userId, $severity = 0) {
  * @return PDOStatement
  */
 function executeSQL($query, $query_params) {
+	$setting = new Settings();
+
+	if (preg_match("FROM information_schema.columns", $query) == 0) {
+		preg_match("(FROM ([A-z]+))", $query, $matches, PREG_OFFSET_CAPTURE);
+		if (empty($matches)) {
+			preg_match("(INTO ([A-z]+))", $query, $matches, PREG_OFFSET_CAPTURE);
+		}
+		$query = substr_replace($query, $setting->getDbPrefix(), $matches[1][1], 0);
+	}
+
 	$stmt = null;
 
 	try {
