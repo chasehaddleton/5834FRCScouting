@@ -1,8 +1,12 @@
 <?php
-require($_SERVER['DOCUMENT_ROOT'] . "/components/common.php");
+require_once("../components/Settings.php");
+
+$setting = new Settings();
+$dbPrefix = $setting->getDbPrefix();
+
+require_once($setting->getAppPath() . '/components/common.php');
 
 if (!empty($_POST)) {
-
 	// Validate that the user entered an email.
 	if (empty($_POST['email'])) {
 		if (!empty($_POST['name'])) {
@@ -11,7 +15,7 @@ if (!empty($_POST)) {
 
 		$_SESSION['errorMsg'] = "Please enter your email address.";
 
-		redirectToSelf($phpfilename);
+		redirect($self);
 	}
 
 	// Validate that the user entered a name.
@@ -22,7 +26,7 @@ if (!empty($_POST)) {
 
 		$_SESSION['errorMsg'] = "Please enter your name.";
 
-		redirectToSelf($phpfilename);
+		redirect($self);
 	}
 
 	// Validate that the user entered a password.
@@ -37,7 +41,22 @@ if (!empty($_POST)) {
 
 		$_SESSION['errorMsg'] = "Please enter a password.";
 
-		redirectToSelf($phpfilename);
+		redirect($self);
+	}
+
+	// Validate that the user entered a team number.
+	if (empty($_POST['teamNumber'])) {
+		if (!empty($_POST['email'])) {
+			$submitted_email = htmlentities($_POST['email'], ENT_QUOTES, 'UTF-8');
+		}
+
+		if (!empty($_POST['name'])) {
+			$submitted_fullname = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
+		}
+
+		$_SESSION['errorMsg'] = "Please enter a teamNumber.";
+
+		redirect($self);
 	}
 
 	// Validate the user's email address.
@@ -52,12 +71,11 @@ if (!empty($_POST)) {
 
 		$_SESSION['errorMsg'] = "The email address " . $_POST['email'] . " is invalid.";
 
-		redirectToSelf($phpfilename);
+		redirect($self);
 	}
 
 	// Validate the user's email to guarantee it has not been used for registration before.
-	$query = "SELECT 1 FROM users WHERE email = :email";
-
+	$query = "SELECT 1 FROM " . $dbPrefix . "Users WHERE email = :email";
 	$query_params = array(':email' => $_POST['email']);
 
 	$stmt = executeSQL($query, $query_params);
@@ -76,7 +94,7 @@ if (!empty($_POST)) {
 
 		$_SESSION['errorMsg'] = "This email address is already registered";
 
-		redirectToSelf($phpfilename);
+		redirect($self);
 	}
 
 	// Validate that their passwords match.
@@ -91,73 +109,100 @@ if (!empty($_POST)) {
 
 		$_SESSION['errorMsg'] = "The entered passwords do not match.";
 
-		redirectToSelf($phpfilename);
+		redirect($self);
 	}
 
 	// Prepare the password.
 	$pass = $_POST['password'];
 	$hash = password_hash($pass, PASSWORD_DEFAULT);
 
-	$query = "INSERT INTO users (fullname, email, password) VALUES (:name, :email, :password)";
-	$query_params = array(':name' => htmlspecialchars($_POST['name']), ':email' => htmlspecialchars($_POST['email']), ':password' => $hash);
+	$query = "INSERT INTO " . $dbPrefix . "Users (fullName, email, teamnumber, password) VALUES (:name, :email, :teamNumber, :password)";
+	$query_params = array(':name' => htmlspecialchars($_POST['name']), ':email' => htmlspecialchars($_POST['email']), ':teamNumber' => intVal($_POST['teamNumber']), ':password' => $hash);
 	
 	try {
 		// Execute the query to create the user
 		$stmt = $db->prepare($query);
 		$result = $stmt->execute($query_params);
 	} catch (PDOException $ex) {
-		logMessage("Failed to run query: " . $ex->getMessage() . ". Query: " . $query, 0, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_X_FORWARDED_FOR']);
+		logMessage("Failed to run query: " . $ex->getMessage() . ". Query: " . $query, 0, 1);
 
-		die("Failed to run query");
+		die("Failed to run query. Account not created");
 	}
 
 	$id = $db->lastInsertId();
 
-	// This redirects the user back to the login page after they register
-	header("Location: /login/");
+	logMessage("Account created", $id);
 
-	logMessage("Account created", $id, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_X_FORWARDED_FOR']);
-
-	die("Redirecting to login.php");
+	redirect($setting->getAppPath() . "/login/");
 }
-?>
-<?php
+
 printHead("Register");
 printNav();
 ?>
 
 <section id="main">
-	<div class="row">
-		<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
-			<div class="panel">
-
+	<form action="<?php echo $setting->getAppURL() ?>/register/register.php" method="POST" data-abide>
+		<div class="row">
+			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
+				<h3>Register:</h3>
 				<?php displayMsg(); ?>
+			</div>
+		</div>
 
-				<form action="register.php" method="POST" data-abide>
-					<h5>Register:</h5>
+		<div class="row">
+			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
+				<label>Full Name
+					<input type="text" name="name" placeholder="Full name" class="validate" required>
+				</label>
+			</div>
+		</div>
 
-					<input type="text" name="name" placeholder="Full name"
-					       value="<?php print $submitted_fullname;
-					       unset($submitted_fullname) ?>" class="validate" required>
+		<div class="row">
+			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
+				<label>Email
+					<input type="email" name="email" placeholder="email" class="validate" required>
+				</label>
+			</div>
+		</div>
 
-					<input type="email" name="email" placeholder="email" value="<?php print $submitted_email;
-					unset($submitted_email) ?>" class="validate" required>
+		<div class="row">
+			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
+				<label>Team Number
+					<input type="number" name="teamNumber" placeholder="XXXX" class="validate" required min="1"
+					       max="7000">
+				</label>
+			</div>
+		</div>
 
+		<div class="row">
+			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
+				<label>Password
 					<input type="password" name="password" placeholder="password" class="validate" required>
+				</label>
+			</div>
+		</div>
 
+		<div class="row">
+			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
+				<label>Retype Password
 					<input type="password" name="re-password" placeholder="Retype password" class="validate"
 					       required>
+				</label>
+			</div>
+		</div>
 
-					<button class="expand" type="submit" name="action">Submit</button>
+		<div class="row">
+			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
+				<button class="button" type="submit" name="action">Submit</button>
 
-				</form>
-				<div data-alert class="alert-box info">
-					Registered? Click <a href="/login">here</a> to login
-					<a href="#" class="close">&times;</a>
+				<div data-closable class="callout alert">
+					Registered? Click <a href="<?php echo $setting->getAppURL() ?>/login/">here</a> to login
+					<button class="close-button" aria-label="Dismiss alert" type="button" data-close=""><span
+							aria-hidden="true">×</span></button>
 				</div>
 			</div>
 		</div>
-	</div>
+	</form>
 </section>
 
 <?php printFooter(); ?>

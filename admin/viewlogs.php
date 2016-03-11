@@ -1,5 +1,8 @@
 <?php
-require($_SERVER['DOCUMENT_ROOT'] . '/components/common.php');
+require_once("../components/Settings.php");
+$setting = new Settings();
+
+require_once($setting->getAppPath() . '/components/common.php');
 
 verifyPermission($_SESSION['level'], 2);
 
@@ -30,7 +33,7 @@ printNav();
 				</thead>
 				<tbody>
 				<?php
-				$query = "SELECT logs.id, logs.logTime, logs.message, users.fullname, logs.ip, logs.xffip
+				$query = "SELECT logs.id, logs.logTime, logs.message, users.fullname, logs.ip, logs.severity
 							FROM logs
 							LEFT JOIN users ON users.id = logs.userID
 							ORDER BY logs.id DESC LIMIT " . $LIMIT_PER_PAGE;

@@ -1,4 +1,5 @@
 <?php
+include_once("Settings.php");
 $setting = new Settings();
 
 if (!isset($_SESSION)) {
@@ -12,9 +13,8 @@ try {
 } catch (PDOException $ex) {
 	//logMessage("Failed to run query: " . $ex->getMessage() . ". Query: " . $query, $_SESSION['userid'], $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_X_FORWARDED_FOR']);
 
-	$_SESSION['errorMsg'] = "SQL Error, please try again or inform the webmaster.";
-
 	die("Failed to connect to the database: " . $ex->getMessage());
 }
 
+$self = $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 include_once($setting->getAppPath() . "/components/functions.php");

@@ -1,4 +1,5 @@
 <?php
+require_once("Settings.php");
 
 /**
  * Class Users
@@ -6,12 +7,17 @@
  * This class defines the basic structure for a site user.
  */
 class Users {
-	private $userData = array();
-
+	private static $API_KEY_PEPPER = "@(*TRYU(HNSDF*(1324{}:>{}AF1";
+	public $fullName;
+	public $key;
+	protected $userData = array();
+	
 	// Determine and store the ID of the user.
-	public function __construct($id) {
-		$query = (is_numeric($id)) ? "SELECT * FROM users WHERE id = :id" : "SELECT * FROM users WHERE UCASE(email) = UCASE(:id)";
 
+	public function __construct($id) {
+		$setting = new Settings();
+
+		$query = (is_numeric($id)) ? "SELECT * FROM " . $setting->getDbPrefix() . "Users WHERE id = :id" : "SELECT * FROM " . $setting->getDbPrefix() . "Users WHERE UCASE(email) = UCASE(:id)";
 		$query_params = array(':id' => $id);
 
 		$stmt = executeSQL($query, $query_params);
@@ -20,6 +26,44 @@ class Users {
 		foreach ($results as $col => $data) {
 			$this->userData[$col] = $data;
 		}
+
+		$this->fullName = $this->userData['fullName'];
+	}
+
+	public function getAPIKey() {
+		$setting = new Settings();
+
+		$query = "SELECT apiKey FROM " . $setting->getDbPrefix() . "APIKey WHERE userId = :userId";
+		$query_params = array(':userId' => $this->userData['userId']);
+
+		$stmt = executeSQL($query, $query_params);
+
+		$row = $stmt->fetch();
+
+		if ($row) {
+			$this->key = $row['apiKey'];
+		} else {
+			$this->key = $this->generateAPIKey();
+		}
+
+		return $this->key;
+	}
+
+	private function generateAPIKey() {
+		$setting = new Settings();
+
+		$key = hash_hmac("sha512", $this->userData['userId'] . $this->userData['teamNumber'], $this->userData['email'] . static::$API_KEY_PEPPER);
+
+		$query = "INSERT INTO " . $setting->getDbPrefix() . "APIKey (apiKey, userId, creationDate) VALUES (:apiKey, :userId, :curDate)";
+		$query_params = array(":apiKey" => $key, ":userId" => $this->userData['userId'], ":curDate" => date('Y-m-d G:i:s'));
+
+		executeSQL($query, $query_params);
+
+		return $key;
+	}
+
+	public function exists() {
+		return !isset($userData);
 	}
 
 	public function __get($name) {
@@ -27,21 +71,24 @@ class Users {
 	}
 
 	public function __set($name, $value) {
+		$setting = new Settings();
+
 		if ($name == "password") {
 			$value = password_hash($value, PASSWORD_DEFAULT);
 		} else {
 			$value = htmlspecialchars($value);
 		}
 
-		$query = "UPDATE users SET $name = :value WHERE id = :id";
+		$query = "UPDATE " . $setting->getDbPrefix() . "users SET $name = :value WHERE id = :id";
 		$query_params = array(':id' => $this->userData['id'], ':value' => $value);
 
 		executeSQL($query, $query_params);
 	}
 
 	public function delete() {
-		$query = "DELETE FROM users WHERE id = :id";
+		$setting = new Settings();
 
+		$query = "DELETE FROM " . $setting->getDbPrefix() . "Users WHERE id = :id";
 		$query_params = array(':id' => $this->userData['id']);
 
 		executeSQL($query, $query_params);
