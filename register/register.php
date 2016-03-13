@@ -2,7 +2,6 @@
 require_once("../components/Settings.php");
 
 $setting = new Settings();
-$dbPrefix = $setting->getDbPrefix();
 
 require_once($setting->getAppPath() . '/components/common.php');
 
@@ -75,7 +74,7 @@ if (!empty($_POST)) {
 	}
 
 	// Validate the user's email to guarantee it has not been used for registration before.
-	$query = "SELECT 1 FROM " . $dbPrefix . "Users WHERE email = :email";
+	$query = "SELECT 1 FROM Users WHERE email = :email";
 	$query_params = array(':email' => $_POST['email']);
 
 	$stmt = executeSQL($query, $query_params);
@@ -116,24 +115,17 @@ if (!empty($_POST)) {
 	$pass = $_POST['password'];
 	$hash = password_hash($pass, PASSWORD_DEFAULT);
 
-	$query = "INSERT INTO Users (fullName, email, teamnumber, password) VALUES (:name, :email, :teamNumber, :password)";
-	$query_params = array(':name' => htmlspecialchars($_POST['name']), ':email' => htmlspecialchars($_POST['email']), ':teamNumber' => intVal($_POST['teamNumber']), ':password' => $hash);
+	$query = "INSERT INTO Users (fullName, email, teamNumber, password, uniqId) VALUES (:name, :email, :teamNumber, :password, :uniqId)";
+	$query_params = array(':name' => htmlspecialchars($_POST['name']), ':email' => htmlspecialchars($_POST['email']),
+		':teamNumber' => intVal($_POST['teamNumber']), ':password' => $hash, ':uniqId' => uniqid('', true));
 	
-	try {
-		// Execute the query to create the user
-		$stmt = $db->prepare($query);
-		$result = $stmt->execute($query_params);
-	} catch (PDOException $ex) {
-		logMessage("Failed to run query: " . $ex->getMessage() . ". Query: " . $query, 0, 1);
-
-		die("Failed to run query. Account not created");
-	}
+	executeSQL($query, $query_params);
 
 	$id = $db->lastInsertId();
 
 	logMessage("Account created", $id);
 
-	redirect($setting->getAppPath() . "/login/");
+	redirect($setting->getAppURL() . "/login/");
 }
 
 printHead("Register");
@@ -195,7 +187,7 @@ printNav();
 			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
 				<button class="button" type="submit" name="action">Submit</button>
 
-				<div data-closable class="callout alert">
+				<div data-closable class="callout warning">
 					Registered? Click <a href="<?php echo $setting->getAppURL() ?>/login/">here</a> to login
 					<button class="close-button" aria-label="Dismiss alert" type="button" data-close=""><span
 							aria-hidden="true">×</span></button>

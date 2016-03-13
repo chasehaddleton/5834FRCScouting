@@ -1,0 +1,62 @@
+/*body {
+	background-color: #252839;
+	color: #ffffff;
+}
+
+.top-bar, .top-bar ul {
+	background-color: #252839;
+}
+
+.hero {
+	margin-bottom: 1rem;
+	padding: 1rem;
+}
+
+.callout.warning {
+	background-color: #678550;
+}
+
+a, a:visited {
+	color: #f2b632;
+	font-weight: bolder;
+}
+
+.button {
+	background-color: #f2b632;
+}
+
+a:hover, a:active {
+	color: #b4852a;
+}
+
+.button:active, .button:hover {
+	background-color: #b4852a;
+}
+
+h1 > small, h2 > small, h3 > small, h4 > small, h5 > small {
+	color: #ffffff;
+}
+
+.light-accent, .light-accent > h1, .light-accent > h2, .light-accent > h3, .light-accent > h4, .light-accent > h5 {
+	background-color: #677077;
+	color: #ffffff;
+}
+
+.heavy-accent, .heavy-accent > h1, .heavy-accent > h2, .heavy-accent > h3, .heavy-accent > h4, .heavy-accent > h5 {
+	background-color: #b5b5b7;
+	color: #ffffff;
+}*/
+
+.no-js .top-bar {
+	display: none;
+}
+
+@media screen and (min-width: 40em) {
+	.no-js .top-bar {
+		display: block;
+	}
+
+	.no-js .title-bar {
+		display: none;
+	}
+}

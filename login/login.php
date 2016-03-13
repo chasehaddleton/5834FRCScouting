@@ -49,18 +49,19 @@ printHead("Login");
 printNav();
 ?>
 
-<section id="main">
+<header class="hero heavy-accent">
 	<form action="<?php echo $setting->getAppURL() ?>/login/login.php" method="POST">
 		<div class="row">
 			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
 				<h3>Scout Login:</h3>
+				<?php displayMsg(); ?>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
 				<label>Email
-					<input type="text" name="email" placeholder="email" class="validate" required>
+					<input type="text" name="email" placeholder="Email" class="validate" required>
 				</label>
 			</div>
 		</div>
@@ -77,15 +78,14 @@ printNav();
 			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
 				<button class="button" type="submit" name="login">Submit</button>
 
-				<div data-closable class="callout alert">
+				<div data-closable class="callout warning">
 					Not registered? Click <a href='<?php echo $setting->getAppURL() ?>/register/'>here</a>
 					<button class="close-button" aria-label="Dismiss alert" type="button" data-close=""><span
 							aria-hidden="true">×</span></button>
 				</div>
-				<?php displayMsg(); ?>
 			</div>
 		</div>
 	</form>
-</section>
+</header>
 
 <?php printFooter(); ?>

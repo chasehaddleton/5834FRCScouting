@@ -19,6 +19,7 @@ function printHead($title) {
 		<title>$title</title>
 		<link rel="stylesheet" href="$appURL/css/foundation.css"/>
 		<link rel="stylesheet" href="$appURL/css/app.css"/>
+		<link rel="stylesheet" href="$appURL/css/style.css"/>
 	</head>
 	<body>
 EOF;
@@ -29,19 +30,27 @@ function printNav() {
 	$appURL = $setting->getAppURL();
 
 	$out = <<<EOF
-		<div class="top-bar">
-			<div class="top-bar-left">
-				<ul class="dropdown menu" data-dropdown-menu>
-					<li class="menu-text">FRC Stronghold Scouting App</li>
-		        </ul>
-		    </div>
+		<div class="title-bar" data-responsive-toggle="site-menu" data-hide-for="medium">
+			<button class="menu-icon" type="button" data-toggle></button>
+			<div class="title-bar-title">FRC Stronghold Scouting App</div>
+		</div>
+
+		<div class="top-bar" id="site-menu">
+			<div class="top-bar-left hide-for-small-only">
+				<ul class="menu">
+				    <li class="menu-text">FRC Stronghold Scouting App</li>
+				</ul>
+			</div>
 		    <div class="top-bar-right">
 			    <ul class="menu">
+			        <li><a href="$appURL">Home</a></li>
 			        <li><a href="#">Scout</a></li>
 			        <li><a href="#">Analyze</a></li>
 EOF;
 	if (!isset($_SESSION['userId'])) {
 		$out .= "<li><a href=\"$appURL/login/\">Login</a></li>";
+	} else {
+		$out .= "<li><a href=\"$appURL/login/logout.php\">Logout</a></li>";
 	}
 	$out .= <<<EOF
 			    </ul>
@@ -79,24 +88,25 @@ EOF;
 	echo $out;
 }
 
+/**
+ * Verify a user's permission level.
+ *
+ * @param $userLevel int User's user level
+ * @param $requiredLevel int Required level to view page
+ */
 function verifyPermission($userLevel, $requiredLevel) {
 	$setting = new Settings();
 
-	if ($userLevel < $requiredLevel) {
-		$_SESSION['errorMsg'] = "You are not authorized to be here, please sign in.";
+	if (!isset($userLevel) || $userLevel < $requiredLevel) {
+		$_SESSION['errorMsg'] = "You are not authorized to be here, please sign in with an account that is authorized to view the page.";
 		redirect($setting->getAppURL() . "/login/");
 		die("Unauthorized");
 	}
 }
 
-function verifyAuthKey($authKey, $userId) {
-	$setting = new Settings();
-
-	$query = "SELECT 1 FROM APIKey WHERE authKey = :authKey AND userId = :userId";
-	$query_params = array(":authKey" => $authKey, ":userId" => $userId);
-
-	$stmt = executeSQL($query, $query_params);
-
+function verifyAPIKey($apiKey, $userId, $teamNumber) {
+	$key = Users::generateAPIKeyFor($userId, $teamNumber);
+	return hash_equals($key, $apiKey);
 }
 
 function redirect($url, $statusCode = 303) {
@@ -110,7 +120,6 @@ function redirect($url, $statusCode = 303) {
  * @param string $message The message that will be added to the log
  * @param int $userId ID that will be recorded as causing the message to be logged.
  * @param int $severity How severe this error is
- * @return void
  */
 function logMessage($message, $userId, $severity = 0) {
 	$query = "INSERT INTO Logs (logTime, message, userId, ip, severity) VALUES (:logTime, :message, :userId, :ip, :severity)";
@@ -121,7 +130,8 @@ function logMessage($message, $userId, $severity = 0) {
 
 
 /**
- * This function executes an SQL command with parameters and returns the result.
+ * Executes an SQL command (with optional parameters) and returns the result. Can handle the use of table prefixes
+ * as set in the Settings object for the application.
  *
  * @param string $query The SQL query that you would like to run.
  * @param array $query_params Parameters for the SQL query.
@@ -130,10 +140,13 @@ function logMessage($message, $userId, $severity = 0) {
 function executeSQL($query, $query_params) {
 	$setting = new Settings();
 
-	if (preg_match("FROM information_schema.columns", $query) == 0) {
+	if (strpos("FROM information_schema", $query) == false) {
 		preg_match("(FROM ([A-z]+))", $query, $matches, PREG_OFFSET_CAPTURE);
 		if (empty($matches)) {
 			preg_match("(INTO ([A-z]+))", $query, $matches, PREG_OFFSET_CAPTURE);
+		}
+		if (empty($matches)) {
+			preg_match("(UPDATE ([A-z]+))", $query, $matches, PREG_OFFSET_CAPTURE);
 		}
 		$query = substr_replace($query, $setting->getDbPrefix(), $matches[1][1], 0);
 	}
@@ -155,6 +168,14 @@ function executeSQL($query, $query_params) {
 	return $stmt;
 }
 
+/**
+ * Create pagination for a page.
+ *
+ * @param $count int Number of rows in the table.
+ * @param $rowsPerPage int Number of rows you would like displayed per page.
+ * @param $page int The current page number.
+ * @param $phpfilename string The name of the current webpage.
+ */
 function pagination($count, $rowsPerPage, $page, $phpfilename) {
 	$maxPages = ceil($count / $rowsPerPage);
 	$page = intval($page);
@@ -213,8 +234,6 @@ function pagination($count, $rowsPerPage, $page, $phpfilename) {
 
 /**
  * This function echos the content of the message variables to the forum in alert boxes.
- *
- * @return void
  */
 function displayMsg() {
 	if (isset($_SESSION['Msg'])) {
@@ -234,6 +253,15 @@ function displayMsg() {
 	}
 }
 
+/**
+ * Display's a given MySQL table to the user.
+ *
+ * @param $tableName string Name of the table you would like to display.
+ * @param $limitPerPage int Number of rows to show per page.
+ * @param $pageNumber int Which page of results to display.
+ * @param $phpFileName string Name of the (current file) to direct things to.
+ * @param $editDelete boolean Whether or not you want "Edit" and "Delete" buttons to appear.
+ */
 function displayTable($tableName, $limitPerPage, $pageNumber, $phpFileName, $editDelete) {
 	/*
 	 * Generate and display table header
@@ -301,6 +329,12 @@ function displayTable($tableName, $limitPerPage, $pageNumber, $phpFileName, $edi
 	echo "</div>";
 }
 
+/**
+ * Return an error to the user in JSON format.
+ *
+ * @param $errorMsg string Error message to include in JSON object.
+ * @param $errorCode int Error code to send back in the JSON object.
+ */
 function errorResponse($errorMsg, $errorCode) {
 	echo json_encode(new ScoutingAPI\Error($errorMsg, $errorCode));
 	die();

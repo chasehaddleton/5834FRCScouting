@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 	errorResponse("Error, must POST to this page.", 1);
 }
 
-$requiredPOSTKeys = array('apiKey', 'userId', 'teamNumber');
+$requiredPOSTKeys = array('email', 'password');
 
 if (count(array_diff($requiredPOSTKeys, array_keys($_POST))) != 0) {
 	errorResponse("Error, email and/or password is missing.", 2);
@@ -19,7 +19,16 @@ if (count(array_diff($requiredPOSTKeys, array_keys($_POST))) != 0) {
 
 // Do the stuff for this page.
 
-if (verifyAPIKey($_POST['apiKey'], $_POST['userId'], $_POST['teamNumber'])) {
-	errorResponse("Key matches", -1);
+$user = new Users($_POST['email']);
+
+if ($user->exists()) {
+	if (password_verify($_POST['password'], $user->password)) {
+		$user->getAPIKey();
+		$out = array("login" => "good", "user" => $user);
+
+		echo json_encode($out);
+		die();
+	}
 }
-errorResponse("No match", 4);
+
+errorResponse("Error, bad login or user does not exist.", 3);

@@ -16,5 +16,5 @@ try {
 	die("Failed to connect to the database: " . $ex->getMessage());
 }
 
-$self = $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+$self = $_SERVER['REQUEST_URI'];
 include_once($setting->getAppPath() . "/components/functions.php");
