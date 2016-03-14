@@ -1,9 +1,9 @@
 # FRC Stronghold Scouting Site
 
-# API
+## API
 API is currently located at riverdalerobotics.com/scouting/api
 
-## Authentication
+### Authentication
 Authentication should be made to api/authenticate.php
 Request should be of type POST made with the following fields:
 | POST Key | Description               |
