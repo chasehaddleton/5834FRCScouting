@@ -1,5 +1,6 @@
 <?php
-include_once("components/common.php");
+require_once("components/common.php");
+require_once($setting->getAppPath() . "/components/Team.php");
 
 verifyPermission($_SESSION['level'], 0);
 
@@ -27,11 +28,19 @@ printNav();
 	</header>
 
 
-<?php if (isset($_SESSION['userId'])) { ?>
+<?php if (isset($_SESSION['userId'])) {
+	$team = new Team($_SESSION['teamNumber']);
+	?>
 	<div class="row">
 		<div class="small-12 columns">
 			<h4>Team <?php echo $_SESSION['teamNumber'] ?>'s dashboard </h4>
-
+			<p>
+				Your team has <?php echo $team->getNumberOfScoutMembers(); ?> person registered for this app.
+				<br>
+				<small>
+					Click <a href="<?php echo $setting->getAppURL() ?>/team/">here</a> to see a directory.
+				</small>
+			</p>
 		</div>
 	</div>
 <?php } ?>

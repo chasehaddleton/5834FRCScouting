@@ -3,7 +3,7 @@ include_once("../components/Settings.php");
 $setting = new Settings();
 
 require_once($setting->getAppPath() . '/components/common.php');
-require_once($setting->getAppPath() . '/components/Users.php');
+require_once($setting->getAppPath() . '/components/User.php');
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 	$user = new Users($_POST['email']);

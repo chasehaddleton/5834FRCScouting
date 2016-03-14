@@ -1,13 +1,16 @@
 <?php
-include_once("../components/Settings.php");
-$setting = new Settings();
+require_once('../components/common.php');
+require_once($setting->getAppPath() . '/components/User.php');
 
-require_once($setting->getAppPath() . '/components/common.php');
-require_once($setting->getAppPath() . '/components/Users.php');
-
-printHead("Register");
+printHead("Events");
 printNav();
 ?>
 
+<div class="row">
+	<div class="small-12 columns">
+		Fill DB with Events:
+		Click <a href="#">here</a>!
+	</div>
+</div>
 
 <?php printFooter() ?>

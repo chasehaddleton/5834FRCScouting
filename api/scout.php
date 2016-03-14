@@ -3,7 +3,7 @@ include_once("../components/Settings.php");
 $setting = new Settings();
 
 require_once($setting->getAppPath() . '/components/common.php');
-require_once($setting->getAppPath() . '/components/Users.php');
+require_once($setting->getAppPath() . '/components/User.php');
 
 // Check all page conditions.
 
@@ -22,4 +22,5 @@ if (count(array_diff($requiredPOSTKeys, array_keys($_POST))) != 0) {
 if (verifyAPIKey($_POST['apiKey'], $_POST['userId'], $_POST['teamNumber'])) {
 	errorResponse("Key matches", -1);
 }
+
 errorResponse("No match", 4);

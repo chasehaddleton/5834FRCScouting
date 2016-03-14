@@ -104,9 +104,9 @@ function verifyPermission($userLevel, $requiredLevel) {
 	}
 }
 
-function verifyAPIKey($apiKey, $userId, $teamNumber) {
-	$key = Users::generateAPIKeyFor($userId, $teamNumber);
-	return hash_equals($key, $apiKey);
+function verifyAPIKey($userKey, $userId, $teamNumber) {
+	$genKey = Users::generateAPIKeyFor($userId, $teamNumber);
+	return hash_equals($genKey, $userKey);
 }
 
 function redirect($url, $statusCode = 303) {

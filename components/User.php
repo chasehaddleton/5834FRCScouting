@@ -9,7 +9,7 @@ class Users {
 	private static $API_KEY_PEPPER = "@(*TRYU(HNSDF*(1324{}:>{}AF1";
 	public $userId;
 	public $fullName;
-	public $apiKey;
+	public $APIKey;
 	public $teamNumber;
 	protected $userData = array();
 	
@@ -45,12 +45,12 @@ class Users {
 		$row = $stmt->fetch();
 
 		if ($row) {
-			$this->apiKey = $row['apiKey'];
+			$this->APIKey = $row['apiKey'];
 		} else {
-			$this->apiKey = $this->generateAPIKey();
+			$this->APIKey = $this->generateAPIKey();
 		}
 
-		return $this->apiKey;
+		return $this->APIKey;
 	}
 
 	private function generateAPIKey() {
@@ -73,8 +73,6 @@ class Users {
 	}
 
 	public function __set($name, $value) {
-		$setting = new Settings();
-
 		if ($name == "password") {
 			$value = password_hash($value, PASSWORD_DEFAULT);
 		} else {
