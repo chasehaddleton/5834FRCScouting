@@ -1,4 +1,4 @@
-CREATE TABLE scoutingUsers
+CREATE TABLE Users
 (
 	userId      INT(11) PRIMARY KEY    NOT NULL,
 	fullName    VARCHAR(80)            NOT NULL,
@@ -8,17 +8,17 @@ CREATE TABLE scoutingUsers
 	level       TINYINT(4) DEFAULT '0' NOT NULL,
 	uniqId      VARCHAR(24)            NOT NULL,
 	phoneNumber VARCHAR(20) DEFAULT '-1',
-	CONSTRAINT teamNumber FOREIGN KEY (teamNumber) REFERENCES scoutingTeams (teamNumber)
+	CONSTRAINT teamNumber FOREIGN KEY (teamNumber) REFERENCES Teams (teamNumber)
 );
-CREATE INDEX teamNumber ON scoutingUsers (teamNumber);
-CREATE INDEX userId ON scoutingUsers (userId);
-CREATE TABLE scoutingTeams
+CREATE INDEX teamNumber ON Users (teamNumber);
+CREATE INDEX userId ON Users (userId);
+CREATE TABLE Teams
 (
 	teamNumber INT(11) PRIMARY KEY NOT NULL,
 	teamName   VARCHAR(30)
 );
-CREATE INDEX teamNumber ON scoutingTeams (teamNumber);
-CREATE TABLE scoutingMatch
+CREATE INDEX teamNumber ON Teams (teamNumber);
+CREATE TABLE Match
 (
 	matchId     INT(11) PRIMARY KEY NOT NULL,
 	red1        INT(11)             NOT NULL,
@@ -29,16 +29,22 @@ CREATE TABLE scoutingMatch
 	blue3       INT(11),
 	finals      TINYINT(1) DEFAULT '1',
 	compKey     VARCHAR(10),
-	matchNumber INT(11)             NOT NULL
+	matchNumber INT(11)             NOT NULL,
+	CONSTRAINT blue1 FOREIGN KEY (blue1) REFERENCES Teams (teamNumber),
+	CONSTRAINT blue2 FOREIGN KEY (blue2) REFERENCES Teams (teamNumber),
+	CONSTRAINT blue3 FOREIGN KEY (blue3) REFERENCES Teams (teamNumber),
+	CONSTRAINT red1 FOREIGN KEY (red1) REFERENCES Teams (teamNumber),
+	CONSTRAINT red2 FOREIGN KEY (red2) REFERENCES Teams (teamNumber),
+	CONSTRAINT red3 FOREIGN KEY (red3) REFERENCES Teams (teamNumber)
 );
-CREATE INDEX blue1 ON scoutingMatch (blue1);
-CREATE INDEX blue2 ON scoutingMatch (blue2);
-CREATE INDEX blue3 ON scoutingMatch (blue3);
-CREATE INDEX compKey ON scoutingMatch (compKey);
-CREATE INDEX red1 ON scoutingMatch (red1);
-CREATE INDEX red2 ON scoutingMatch (red2);
-CREATE INDEX red3 ON scoutingMatch (red3);
-CREATE TABLE scoutingShot
+CREATE INDEX blue1 ON Match (blue1);
+CREATE INDEX blue2 ON Match (blue2);
+CREATE INDEX blue3 ON Match (blue3);
+CREATE INDEX compKey ON Match (compKey);
+CREATE INDEX red1 ON Match (red1);
+CREATE INDEX red2 ON Match (red2);
+CREATE INDEX red3 ON Match (red3);
+CREATE TABLE Shot
 (
 	shotId          INT(11) PRIMARY KEY             NOT NULL,
 	teamNumber      INT(11)                         NOT NULL,
@@ -48,19 +54,19 @@ CREATE TABLE scoutingShot
 	matchId         INT(11)                         NOT NULL,
 	scoutTeamNumber INT(11)
 );
-CREATE INDEX matchId ON scoutingShot (matchId);
-CREATE INDEX teamId ON scoutingShot (teamNumber);
-CREATE TABLE scoutingCrossing
+CREATE INDEX matchId ON Shot (matchId);
+CREATE INDEX teamId ON Shot (teamNumber);
+CREATE TABLE Crossing
 (
 	crossingId      INT(11) PRIMARY KEY                                        NOT NULL,
 	teamNumber      INT(11),
 	matchId         INT(11),
-	defenseName     ENUM('PC', 'CDF', 'RP', 'M', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
+	defenseName     ENUM('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
 	defenseType     ENUM('A', 'B', 'C', 'D')                                   NOT NULL,
 	scoutTeamNumber INT(11)                                                    NOT NULL
 );
-CREATE INDEX teamNumber ON scoutingCrossing (teamNumber);
-CREATE TABLE scoutingScale
+CREATE INDEX teamNumber ON Crossing (teamNumber);
+CREATE TABLE Scale
 (
 	scaleId         INT(11) PRIMARY KEY             NOT NULL,
 	teamNumber      INT(11)                         NOT NULL,
@@ -68,7 +74,7 @@ CREATE TABLE scoutingScale
 	scoutTeamNumber INT(11)                         NOT NULL,
 	towerSide       ENUM('LEFT', 'CENTER', 'RIGHT') NOT NULL
 );
-CREATE TABLE scoutingLogs
+CREATE TABLE Logs
 (
 	logId    INT(11) PRIMARY KEY NOT NULL,
 	logTime  DATETIME,
@@ -77,16 +83,16 @@ CREATE TABLE scoutingLogs
 	ip       VARCHAR(16)         NOT NULL,
 	severity TINYINT(4)          NOT NULL
 );
-CREATE INDEX severity ON scoutingLogs (severity);
-CREATE INDEX userId ON scoutingLogs (userId);
-CREATE TABLE scoutingAPIKey
+CREATE INDEX severity ON Logs (severity);
+CREATE INDEX userId ON Logs (userId);
+CREATE TABLE APIKey
 (
 	keyId        INT(11) PRIMARY KEY NOT NULL,
 	apiKey       VARCHAR(128)        NOT NULL,
 	userId       INT(11)             NOT NULL,
 	creationDate DATETIME            NOT NULL
 );
-CREATE TABLE scoutingNote
+CREATE TABLE Note
 (
 	noteId             INT(11) PRIMARY KEY NOT NULL,
 	teamNumber         INT(11)             NOT NULL,
@@ -94,4 +100,4 @@ CREATE TABLE scoutingNote
 	contents           TEXT                NOT NULL,
 	matchId            INT(11)
 );
-CREATE INDEX matchId ON scoutingNote (matchId);
+CREATE INDEX matchId ON Note (matchId);
