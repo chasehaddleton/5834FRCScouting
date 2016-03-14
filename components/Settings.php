@@ -1,6 +1,9 @@
 <?php
 class Settings {
 	protected $applicationRoot = "/scouting";
+	protected $applicationName = "The Red Alliance";
+	protected $TBAHeader = "X-TBA-App-Id: 5834:scouting-site:v0.01";
+	protected $dbPrefix = "scouting";
 	protected $dbHost;
 	protected $dbName;
 	protected $username;
@@ -22,7 +25,21 @@ class Settings {
 	}
 
 	public function getDbPrefix() {
-		return "scouting";
+		return $this->dbPrefix;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTBAHeader() {
+		return $this->TBAHeader;
+	}
+
+	/**
+	 * @return string name of the application
+	 */
+	public function getApplicationName() {
+		return $this->applicationName;
 	}
 
 	/**

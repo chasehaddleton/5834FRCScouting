@@ -1,6 +1,6 @@
 <?php
 require_once("components/common.php");
-require_once($setting->getAppPath() . "/components/Team.php");
+require_once($setting->getAppPath() . "/components/Data/Team.php");
 
 verifyPermission($_SESSION['level'], 0);
 
@@ -10,7 +10,7 @@ printNav();
 	<header class="hero heavy-accent">
 		<div class="row">
 			<div class="large-12 columns">
-				<h2>Welcome to 5834's Scouting App
+				<h2>Welcome to <?php echo $setting->getApplicationName() ?>
 					<small>Version 0.01</small>
 				</h2>
 				<?php displayMsg(); ?>
@@ -26,7 +26,6 @@ printNav();
 			</div>
 		</div>
 	</header>
-
 
 <?php if (isset($_SESSION['userId'])) {
 	$team = new Team($_SESSION['teamNumber']);

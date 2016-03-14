@@ -5,8 +5,8 @@ require_once($setting->getAppPath() . "/components/common.php");
 require_once($setting->getAppPath() . "/components/Error.php");
 
 function printHead($title) {
-	$title = ucwords($title . " - 5834 Scouting");
 	$setting = new Settings();
+	$title = ucwords($title . " - " . $setting->getApplicationName());
 	$appURL = $setting->getAppURL();
 
 	echo <<<EOF
@@ -28,6 +28,7 @@ EOF;
 function printNav() {
 	$setting = new Settings();
 	$appURL = $setting->getAppURL();
+	$appName = $setting->getApplicationName();
 
 	$out = <<<EOF
 		<div class="title-bar" data-responsive-toggle="site-menu" data-hide-for="medium">
@@ -38,7 +39,7 @@ function printNav() {
 		<div class="top-bar" id="site-menu">
 			<div class="top-bar-left hide-for-small-only">
 				<ul class="menu">
-				    <li class="menu-text">FRC Stronghold Scouting App</li>
+				    <li class="menu-text">$appName</li>
 				</ul>
 			</div>
 EOF;
@@ -170,6 +171,19 @@ function executeSQL($query, $query_params) {
 	}
 
 	return $stmt;
+}
+
+/**
+ * Executes an SQL command through the executeSQL method and returns the first row of results.
+ *
+ * @param $query string The SQL query that you would like to run.
+ * @param $query_params array Parameters for the SQL query.
+ * @return mixed
+ */
+function executeSQLSingleRow($query, $query_params) {
+	$stmt = executeSQL($query, $query_params);
+
+	return $stmt->fetch();
 }
 
 /**

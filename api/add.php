@@ -35,6 +35,8 @@ switch (strtoupper($_GET['type'])) {
 		$query = "INSERT INTO Shot (matchId, teamNumber, towerSide, towerGoal, scored, scoutTeamNumber) VALUES (:matchId, :teamNumber, :towerSide, :towerGoal, :scored, :scoutTeamNumber)";
 		$query_params = array(":matchId" => intval($_GET['matchId']), ":teamNumber" => intval($_GET['teamNumber']), ":scoutTeamNumber" => intval($_GET['scoutTeamNumber']));
 
+		$scored = (bool)$_GET['scored'];
+		$query_params[':scored'] = ($scored) ? 1 : 0;
 
 		if (!in_array(strtoupper($_GET['towerSide']), $towerSides, true)) {
 			errorResponse("Error, malformed tower side in request.", 32);
@@ -49,7 +51,11 @@ switch (strtoupper($_GET['type'])) {
 
 		executeSQL($query, $query_params);
 
-		$out = array("Addition" => "Successful");
+		$query = "SELECT count(shotId) AS numberScored FROM Shot WHERE teamNumber = :teamId AND matchId = :matchId AND scored = 1";
+		$query_params = array(':teamId' => intval($_GET['teamNumber']), ":matchId" => intval($_GET['matchId']));
+		$result = executeSQLSingleRow($query, $query_params);
+
+		$out = array("Addition" => "Successful", "");
 		echo json_encode($out);
 
 		break;
