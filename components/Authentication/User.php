@@ -18,7 +18,6 @@ class User {
 	public function __construct($id) {
 		$query = (is_numeric($id)) ? "SELECT * FROM Users WHERE userId = :id" : "SELECT * FROM Users WHERE UCASE(email) = UCASE(:id)";
 		$query_params = array(':id' => $id);
-
 		$stmt = executeSQL($query, $query_params);
 		$results = $stmt->fetch();
 
@@ -31,27 +30,17 @@ class User {
 		$this->scoutTeamNumber = $this->userData['teamNumber'];
 	}
 
-	public static function generateAPIKeyFor($userId, $teamNumber) {
-		$user = new User($userId);
-		return hash_hmac("sha512", $userId . $teamNumber, $user->uniqId . static::$API_KEY_PEPPER);
-	}
-
 	public function getAPIKey() {
 		$query = "SELECT apiKey FROM APIKey WHERE userId = :userId";
 		$query_params = array(':userId' => $this->userData['userId']);
-
 		$stmt = executeSQL($query, $query_params);
-
 		$row = $stmt->fetch();
 
 		if ($row) {
 			$this->APIKey = $row['apiKey'];
 		} else {
-			$key = new APIkey($this->userData['userId'], $this->userData['teamNumber'], $this->userData['uniqId']);
-			$query = "INSERT INTO APIKey (apiKey, userId, creationDate) VALUES (:apiKey, :userId, :curDate)";
-			$query_params = array(":apiKey" => $key, ":userId" => $this->userData['userId'], ":curDate" => date('Y-m-d G:i:s'));
-			executeSQL($query, $query_params);
-
+			$key = new APIKey($this->userData['userId'], $this->userData['teamNumber'], $this->userData['uniqId']);
+			$key->setAPIKey();
 			$this->APIKey = $key;
 		}
 
@@ -75,14 +64,13 @@ class User {
 
 		$query = "UPDATE Users SET $name = :value WHERE id = :id";
 		$query_params = array(':id' => $this->userData['id'], ':value' => $value);
-
 		executeSQL($query, $query_params);
 	}
 
 	public function delete() {
 		$query = "DELETE FROM Users WHERE id = :id";
 		$query_params = array(':id' => $this->userData['id']);
-
 		executeSQL($query, $query_params);
 	}
 }
+
