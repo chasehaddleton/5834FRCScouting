@@ -12,6 +12,17 @@ Request should be of type POST made with the following fields:
 | email    | Email address of the user |
 | password | Password of the user      |
 
+#### Example Return
+
+``` 
+{"user":
+    {"userId":"4",
+    "fullName":"test",
+    "APIKey":"35c2b15b03040726248efbfce75a9225021d27c6d8222acb2c91c04ff63ab78a9b5d0e2933a65bc493482801163ba56966406fb8dc4e99d26fea0e4077a48855",
+    "scoutTeamNumber":"5834"}}
+```
+
+
 ### Normal Requests
 Every other request (besides the ones made to the authentication page) should be made with the following fields:
 
