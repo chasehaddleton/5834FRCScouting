@@ -7,10 +7,10 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 	errorResponse("Error, must POST to this page.", 1);
 }
 
-$requiredPOSTKeys = array('email', 'password');
+$requiredPOSTKeys = array('email', 'password', 'name', 'teamNumber');
 
 if (count(array_diff($requiredPOSTKeys, array_keys($_POST))) != 0) {
-	errorResponse("Error, must POST full name, email, team number, and password", 10);
+	errorResponse("Error, must POST name, email, team number, and password", 10);
 }
 
 // Do the stuff for this page.
@@ -26,8 +26,7 @@ if ($row) {
 }
 
 // Prepare the password.
-$pass = $_POST['password'];
-$hash = password_hash($pass, PASSWORD_DEFAULT);
+$hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
 $query = "INSERT INTO Users (fullName, email, teamNumber, password, uniqId, phoneNumber) VALUES (:name, :email, :teamNumber, :password, :uniqId, :phoneNumber)";
 $query_params = array(':name' => htmlspecialchars($_POST['name']), ':email' => htmlspecialchars($_POST['email']),
@@ -37,5 +36,7 @@ $query_params = array(':name' => htmlspecialchars($_POST['name']), ':email' => h
 executeSQL($query, $query_params);
 
 $id = $db->lastInsertId();
+logMessage("Account created through API", $id);
 
-logMessage("Account created", $id);
+$out = array("Success");
+echo json_encode($out);
