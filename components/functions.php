@@ -2,11 +2,13 @@
 require_once("Settings.php");
 $setting = new Settings();
 require_once($setting->getAppPath() . "/components/common.php");
-require_once($setting->getAppPath() . "/components/Error.php");
+require_once($setting->getAppPath() . "/components/ScoutingAPI/Error.php");
+require_once($setting->getAppPath() . "/components/Authentication/User.php");
+
 
 function printHead($title) {
-	$title = ucwords($title . " - 5834 Scouting");
 	$setting = new Settings();
+	$title = ucwords($title . " - " . $setting->getApplicationName());
 	$appURL = $setting->getAppURL();
 
 	echo <<<EOF
@@ -28,6 +30,7 @@ EOF;
 function printNav() {
 	$setting = new Settings();
 	$appURL = $setting->getAppURL();
+	$appName = $setting->getApplicationName();
 
 	$out = <<<EOF
 		<div class="title-bar" data-responsive-toggle="site-menu" data-hide-for="medium">
@@ -38,20 +41,24 @@ function printNav() {
 		<div class="top-bar" id="site-menu">
 			<div class="top-bar-left hide-for-small-only">
 				<ul class="menu">
-				    <li class="menu-text">FRC Stronghold Scouting App</li>
+				    <li class="menu-text">$appName</li>
 				</ul>
 			</div>
-		    <div class="top-bar-right">
-			    <ul class="menu">
-			        <li><a href="$appURL">Home</a></li>
-			        <li><a href="#">Scout</a></li>
-			        <li><a href="#">Analyze</a></li>
 EOF;
-	if (!isset($_SESSION['userId'])) {
-		$out .= "<li><a href=\"$appURL/login/\">Login</a></li>";
-	} else {
-		$out .= "<li><a href=\"$appURL/login/logout.php\">Logout</a></li>";
+
+	if (isset($_SESSION['userId'])) {
+		$out .= <<<EOF
+		<div class="top-bar-right">
+		    <ul class="menu">
+		        <li><a href="$appURL">Home</a></li>
+		        <li><a href="$appURL/scout/">Scout</a></li>
+		        <li><a href="$appURL/team/">Your Team</a></li>
+		        <li><a href="#">Analyze</a></li>
+				<li><a href="$appURL/login/logout.php">Logout</a></li>
+
+EOF;
 	}
+
 	$out .= <<<EOF
 			    </ul>
 			 </div>
@@ -105,7 +112,7 @@ function verifyPermission($userLevel, $requiredLevel) {
 }
 
 function verifyAPIKey($userKey, $userId, $teamNumber) {
-	$genKey = Users::generateAPIKeyFor($userId, $teamNumber);
+	$genKey = Authentication\User::generateAPIKeyFor($userId, $teamNumber);
 	return hash_equals($genKey, $userKey);
 }
 
@@ -166,6 +173,19 @@ function executeSQL($query, $query_params) {
 	}
 
 	return $stmt;
+}
+
+/**
+ * Executes an SQL command through the executeSQL method and returns the first row of results.
+ *
+ * @param $query string The SQL query that you would like to run.
+ * @param $query_params array Parameters for the SQL query.
+ * @return mixed
+ */
+function executeSQLSingleRow($query, $query_params) {
+	$stmt = executeSQL($query, $query_params);
+
+	return $stmt->fetch();
 }
 
 /**

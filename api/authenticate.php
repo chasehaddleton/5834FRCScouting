@@ -1,9 +1,6 @@
 <?php
-include_once("../components/Settings.php");
-$setting = new Settings();
-
-require_once($setting->getAppPath() . '/components/common.php');
-require_once($setting->getAppPath() . '/components/User.php');
+require_once('../components/common.php');
+require_once($setting->getAppPath() . '/components/Authentication/User.php');
 
 // Check all page conditions.
 
@@ -14,21 +11,21 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 $requiredPOSTKeys = array('email', 'password');
 
 if (count(array_diff($requiredPOSTKeys, array_keys($_POST))) != 0) {
-	errorResponse("Error, email and/or password is missing.", 2);
+	errorResponse("Error, email and/or password is missing.", 10);
 }
 
 // Do the stuff for this page.
 
-$user = new Users($_POST['email']);
+$user = new Authentication\User($_POST['email']);
 
 if ($user->exists()) {
 	if (password_verify($_POST['password'], $user->password)) {
 		$user->getAPIKey();
-		$out = array("login" => "good", "user" => $user);
+		$out = array("user" => $user);
 
 		echo json_encode($out);
 		die();
 	}
 }
 
-errorResponse("Error, bad login or user does not exist.", 3);
+errorResponse("Error, bad login or user does not exist.", 11);

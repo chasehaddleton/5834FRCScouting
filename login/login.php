@@ -1,12 +1,9 @@
 <?php
-include_once("../components/Settings.php");
-$setting = new Settings();
-
-require_once($setting->getAppPath() . '/components/common.php');
-require_once($setting->getAppPath() . '/components/User.php');
+require_once('../components/common.php');
+require_once($setting->getAppPath() . '/components/Authentication/User.php');
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-	$user = new Users($_POST['email']);
+	$user = new Authentication\User($_POST['email']);
 
 	// Validate that they are a registered user.
 	if ($user->exists()) {

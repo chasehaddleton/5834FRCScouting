@@ -1,6 +1,5 @@
 <?php
 require_once('../components/common.php');
-require_once($setting->getAppPath() . '/components/User.php');
 
 verifyPermission($_SESSION['level'], 2);
 set_time_limit(60);
@@ -9,7 +8,7 @@ $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-	'X-TBA-App-Id: 5834:scouting-site:v0.01',
+	$setting->getTBAHeader(),
 ));
 
 $i = 0;
@@ -22,7 +21,7 @@ do {
 	$obj = json_decode($result);
 
 	for ($j = 0; $j < count($obj); $j++) {
-		if ($obj[$j]->nickname != "null") {
+		if (!is_null($obj[$j]->nickname)) {
 			$query_params = array(':teamNumber' => $obj[$j]->team_number, ':teamName' => $obj[$j]->nickname);
 			executeSQL($query, $query_params);
 		}
