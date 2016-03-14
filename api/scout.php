@@ -1,6 +1,5 @@
 <?php
 require_once('../components/common.php');
-require_once($setting->getAppPath() . '/components/User.php');
 
 // Check all page conditions.
 

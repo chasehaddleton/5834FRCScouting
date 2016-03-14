@@ -3,6 +3,8 @@ require_once("Settings.php");
 $setting = new Settings();
 require_once($setting->getAppPath() . "/components/common.php");
 require_once($setting->getAppPath() . "/components/ScoutingAPI/Error.php");
+require_once($setting->getAppPath() . "/components/Authentication/User.php");
+
 
 function printHead($title) {
 	$setting = new Settings();
@@ -110,7 +112,7 @@ function verifyPermission($userLevel, $requiredLevel) {
 }
 
 function verifyAPIKey($userKey, $userId, $teamNumber) {
-	$genKey = Users::generateAPIKeyFor($userId, $teamNumber);
+	$genKey = Authentication\User::generateAPIKeyFor($userId, $teamNumber);
 	return hash_equals($genKey, $userKey);
 }
 

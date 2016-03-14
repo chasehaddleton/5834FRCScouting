@@ -1,6 +1,6 @@
 <?php
 require_once('../components/common.php');
-require_once($setting->getAppPath() . '/components/User.php');
+require_once($setting->getAppPath() . '/components/Authentication/User.php');
 
 if (!empty($_POST)) {
 	// Validate that the user entered an email.

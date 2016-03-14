@@ -1,6 +1,5 @@
 <?php
 require_once('../components/common.php');
-require_once($setting->getAppPath() . '/components/User.php');
 
 verifyPermission($_SESSION['level'], 0);
 

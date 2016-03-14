@@ -28,7 +28,7 @@ printNav();
 	</header>
 
 <?php if (isset($_SESSION['userId'])) {
-	$team = new Team($_SESSION['teamNumber']);
+	$team = new Data\Team($_SESSION['teamNumber']);
 	?>
 	<div class="row">
 		<div class="small-12 columns">

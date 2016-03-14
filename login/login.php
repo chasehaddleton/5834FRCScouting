@@ -3,7 +3,7 @@ require_once('../components/common.php');
 require_once($setting->getAppPath() . '/components/Authentication/User.php');
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-	$user = new User($_POST['email']);
+	$user = new Authentication\User($_POST['email']);
 
 	// Validate that they are a registered user.
 	if ($user->exists()) {

@@ -16,7 +16,7 @@ if (count(array_diff($requiredPOSTKeys, array_keys($_POST))) != 0) {
 
 // Do the stuff for this page.
 
-$user = new Authentication\Users($_POST['email']);
+$user = new Authentication\User($_POST['email']);
 
 if ($user->exists()) {
 	if (password_verify($_POST['password'], $user->password)) {

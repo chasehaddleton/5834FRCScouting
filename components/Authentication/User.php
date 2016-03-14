@@ -6,7 +6,7 @@ namespace Authentication {
 	 *
 	 * This class defines the basic structure for a site user.
 	 */
-	class Users {
+	class User {
 		private static $API_KEY_PEPPER = "@(*TRYU(HNSDF*(1324{}:>{}AF1";
 		public $userId;
 		public $fullName;
