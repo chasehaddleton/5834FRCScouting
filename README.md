@@ -3,16 +3,38 @@
 ## API
 API is currently located at riverdalerobotics.com/scouting/api
 
+### Registration
+Registration can be made through the API by POSTing to api/registration.php
+Request should contain the following keys:
+
+| POST Key   | Description               |
+|------------|---------------------------|
+| email      | Email address of the user |
+| password   | Password of the user      |
+| name       | Name of the user          |
+| teamNumber | Team number of the user   |
+
+Optional keys:
+
+| POST Key         | Description               |
+|------------------|---------------------------|
+| phoneNumber      | Phone number of the user  |
+
+#### Example Successful Return
+```
+    {"Success"}
+```
+
 ### Authentication
 Authentication should be made to api/authenticate.php
-Request should be of type POST made with the following fields:
+Request should be of type POST made with the following keys:
 
 | POST Key | Description               |
 |----------|---------------------------|
 | email    | Email address of the user |
 | password | Password of the user      |
 
-#### Example Return
+#### Example Successful Return
 
 ``` 
 {"user":
@@ -22,9 +44,8 @@ Request should be of type POST made with the following fields:
     "scoutTeamNumber":"5834"}}
 ```
 
-
 ### Normal Requests
-Every other request (besides the ones made to the authentication page) should be made with the following fields:
+Every other request (besides the ones made to the authentication page) should be made with the following keys:
 
 | POST Key        | Description                                   |
 |-----------------|-----------------------------------------------|
@@ -32,10 +53,18 @@ Every other request (besides the ones made to the authentication page) should be
 | userId          | ID of a user (from the authentication object) |
 | scoutTeamNumber | User's FRC team number                        |
 
-## Error Codes ##
-### Less than 10
+## Errors
+The API returns a standard error object for any errors encountered.
+
+#### Example Error
+```
+    {"msg":"Error, must POST name, email, team number, and password","code":10}
+```
+
+### Error Codes ##
+#### Less than 10
 Access error
-### 20s 
+#### 20s 
 Authentication error
-### 30s
+#### 30s
 Adding error
