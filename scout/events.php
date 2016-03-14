@@ -2,14 +2,16 @@
 require_once('../components/common.php');
 require_once($setting->getAppPath() . '/components/User.php');
 
+verifyPermission($_SESSION['level'], 0);
+
 printHead("Events");
 printNav();
 ?>
 
 <div class="row">
 	<div class="small-12 columns">
-		Fill DB with Events:
-		Click <a href="#">here</a>!
+		<h3>Events</h3>
+		<p>This page will show event data and stuff.... Soon</p>
 	</div>
 </div>
 

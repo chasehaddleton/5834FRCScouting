@@ -97,3 +97,11 @@ CREATE TABLE `scoutingUsers` (
   KEY `userId` (`userId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1
 ```
+
+## Error Codes ##
+### Less than 10
+Access error
+### 20s 
+Authentication error
+### 30s
+Adding error

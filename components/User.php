@@ -10,7 +10,7 @@ class Users {
 	public $userId;
 	public $fullName;
 	public $APIKey;
-	public $teamNumber;
+	public $scoutTeamNumber;
 	protected $userData = array();
 	
 	// Determine and store the ID of the user.
@@ -28,7 +28,7 @@ class Users {
 
 		$this->fullName = $this->userData['fullName'];
 		$this->userId = $this->userData['userId'];
-		$this->teamNumber = $this->userData['teamNumber'];
+		$this->scoutTeamNumber = $this->userData['teamNumber'];
 	}
 
 	public static function generateAPIKeyFor($userId, $teamNumber) {

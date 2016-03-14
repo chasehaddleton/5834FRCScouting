@@ -7,7 +7,7 @@ verifyPermission($_SESSION['level'], 0);
 printHead("Team Directory");
 printNav();
 
-$query = "SELECT fullName, email FROM Users WHERE teamNumber = :teamNumber ORDER BY fullName ASC";
+$query = "SELECT fullName, email, phoneNumber FROM Users WHERE teamNumber = :teamNumber ORDER BY fullName ASC";
 $query_params = array(':teamNumber' => $_SESSION['teamNumber']);
 $stmt = executeSQL($query, $query_params);
 $results = $stmt->fetchAll();
@@ -24,6 +24,9 @@ $results = $stmt->fetchAll();
 					echo "<a href=\"#\" class=\"accordion-title\">" . $user['fullName'] . "</a>";
 					echo "<div class=\"accordion-content\" data-tab-content>";
 					echo "Email: " . $user['email'];
+					if (intval($user['phoneNumber']) != -1) {
+						echo "<br>Phone Number: " . $user['phoneNumber'];
+					}
 					echo "</div>";
 					echo "</li>";
 				}

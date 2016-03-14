@@ -1,9 +1,6 @@
 <?php
-require_once("../components/Settings.php");
-
-$setting = new Settings();
-
-require_once($setting->getAppPath() . '/components/common.php');
+require_once('../components/common.php');
+require_once($setting->getAppPath() . '/components/User.php');
 
 if (!empty($_POST)) {
 	// Validate that the user entered an email.
@@ -115,9 +112,10 @@ if (!empty($_POST)) {
 	$pass = $_POST['password'];
 	$hash = password_hash($pass, PASSWORD_DEFAULT);
 
-	$query = "INSERT INTO Users (fullName, email, teamNumber, password, uniqId) VALUES (:name, :email, :teamNumber, :password, :uniqId)";
+	$query = "INSERT INTO Users (fullName, email, teamNumber, password, uniqId, phoneNumber) VALUES (:name, :email, :teamNumber, :password, :uniqId, :phoneNumber)";
 	$query_params = array(':name' => htmlspecialchars($_POST['name']), ':email' => htmlspecialchars($_POST['email']),
-		':teamNumber' => intVal($_POST['teamNumber']), ':password' => $hash, ':uniqId' => uniqid('', true));
+		':teamNumber' => intVal($_POST['teamNumber']), ':password' => $hash, ':uniqId' => uniqid('', true),
+		':phoneNumber' => htmlspecialchars($_POST['phoneNumber']));
 	
 	executeSQL($query, $query_params);
 
@@ -152,15 +150,24 @@ printNav();
 		<div class="row">
 			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
 				<label>Email
-					<input type="email" name="email" placeholder="email" class="validate" required>
+					<input type="email" name="email" placeholder="Email" class="validate" required>
 				</label>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
+				<label>Phone Number
+					<input type="tel" name="phoneNumber" placeholder="+1 (416) 314-1592">
+				</label>
+				<p class="help-text" id="telHelpText">Optional, would only be visible to your team mates.</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
 				<label>Team Number
-					<input type="number" name="teamNumber" placeholder="XXXX" class="validate" required min="1"
+					<input type="number" name="teamNumber" placeholder="xxxx" class="validate" required min="1"
 					       max="7000">
 				</label>
 			</div>
@@ -169,7 +176,7 @@ printNav();
 		<div class="row">
 			<div class="small-12 medium-6 large-4 columns medium-offset-3 large-offset-4">
 				<label>Password
-					<input type="password" name="password" placeholder="password" class="validate" required>
+					<input type="password" name="password" placeholder="Password" class="validate" required>
 				</label>
 			</div>
 		</div>

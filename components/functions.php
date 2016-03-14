@@ -41,17 +41,21 @@ function printNav() {
 				    <li class="menu-text">FRC Stronghold Scouting App</li>
 				</ul>
 			</div>
-		    <div class="top-bar-right">
-			    <ul class="menu">
-			        <li><a href="$appURL">Home</a></li>
-			        <li><a href="#">Scout</a></li>
-			        <li><a href="#">Analyze</a></li>
 EOF;
-	if (!isset($_SESSION['userId'])) {
-		$out .= "<li><a href=\"$appURL/login/\">Login</a></li>";
-	} else {
-		$out .= "<li><a href=\"$appURL/login/logout.php\">Logout</a></li>";
+
+	if (isset($_SESSION['userId'])) {
+		$out .= <<<EOF
+		<div class="top-bar-right">
+		    <ul class="menu">
+		        <li><a href="$appURL">Home</a></li>
+		        <li><a href="$appURL/scout/">Scout</a></li>
+		        <li><a href="$appURL/team/">Your Team</a></li>
+		        <li><a href="#">Analyze</a></li>
+				<li><a href="$appURL/login/logout.php">Logout</a></li>
+
+EOF;
 	}
+
 	$out .= <<<EOF
 			    </ul>
 			 </div>
