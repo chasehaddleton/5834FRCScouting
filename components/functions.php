@@ -112,7 +112,7 @@ function verifyPermission($userLevel, $requiredLevel) {
 }
 
 function verifyAPIKey($userKey, $userId, $teamNumber) {
-	$genKey = Authentication\User::generateAPIKeyFor($userId, $teamNumber);
+	$genKey = new Authentication\APIKey($userId, $teamNumber);
 	return hash_equals($genKey, $userKey);
 }
 
