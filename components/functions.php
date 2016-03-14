@@ -2,7 +2,7 @@
 require_once("Settings.php");
 $setting = new Settings();
 require_once($setting->getAppPath() . "/components/common.php");
-require_once($setting->getAppPath() . "/components/Error.php");
+require_once($setting->getAppPath() . "/components/ScoutingAPI/Error.php");
 
 function printHead($title) {
 	$setting = new Settings();

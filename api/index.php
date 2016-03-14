@@ -1,6 +1,6 @@
 <?php
 require_once("../components/common.php");
-require_once($setting->getAppPath() . "/components/Team.php");
+require_once($setting->getAppPath() . "/components/Data/Team.php");
 
 verifyPermission($_SESSION['level'], 0);
 

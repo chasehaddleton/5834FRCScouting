@@ -1,6 +1,6 @@
 <?php
 require_once('../components/common.php');
-require_once($setting->getAppPath() . '/components/User.php');
+require_once($setting->getAppPath() . '/components/Authentication/User.php');
 
 // Check all page conditions.
 
@@ -16,12 +16,12 @@ if (count(array_diff($requiredPOSTKeys, array_keys($_POST))) != 0) {
 
 // Do the stuff for this page.
 
-$user = new Users($_POST['email']);
+$user = new Authentication\Users($_POST['email']);
 
 if ($user->exists()) {
 	if (password_verify($_POST['password'], $user->password)) {
 		$user->getAPIKey();
-		$out = array("login" => "good", "user" => $user);
+		$out = array("user" => $user);
 
 		echo json_encode($out);
 		die();
