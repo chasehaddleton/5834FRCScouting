@@ -65,6 +65,23 @@ switch (strtoupper($_GET['type'])) {
 			errorResponse("Error, email and/or password is missing.", 31);
 		}
 
+		$query = "INSERT INTO Crossing (type, matchId, teamNumber, defenseName, scoutTeamNumber) VALUES (:matchId, :teamNumber, :defenseName, :scoutTeamNumber)";
+		$query_params = array(":matchId" => intval($_GET['matchId']), ":teamNumber" => intval($_GET['teamNumber']), ":scoutTeamNumber" => intval($_GET['scoutTeamNumber']));
+
+		if (!in_array(strtoupper($_GET['defenseName']), $towerSides, true)) {
+			errorResponse("Error, malformed defense name in request.", 32);
+		}
+
+		$query_params[':defenseName'] = strtoupper($_GET['defenseName']);
+
+		executeSQL($query, $query_params);
+
+		$query = "SELECT count(crossingId) AS defense FROM Crossing WHERE teamNumber = :teamId AND matchId = :matchId";
+		$query_params = array(':teamId' => intval($_GET['teamNumber']), ":matchId" => intval($_GET['matchId']));
+		$result = executeSQLSingleRow($query, $query_params);
+
+		$out = array("Addition" => "Successful", "");
+		echo json_encode($out);
 
 		break;
 	case "Scale":
