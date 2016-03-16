@@ -1,8 +1,9 @@
 <?php
 class Settings {
 	protected $applicationRoot = "/scouting";
-	protected $applicationName = "The Red Alliance";
-	protected $TBAHeader = "X-TBA-App-Id: 5834:scouting-site:v0.01";
+	protected $applicationName = "Scoutr";
+	protected $applicationVersionNumber = 0.1;
+	protected $TBAHeader = "X-TBA-App-Id: 5834:scouting-site:v";
 	protected $dbPrefix = "scouting";
 	protected $dbHost;
 	protected $dbName;
@@ -14,6 +15,7 @@ class Settings {
 		$this->dbName = "riverdalerobotics";
 		$this->username = "riverdalerobotic";
 		$this->password = "SnkkVC4MaVRbgcqx";
+		$this->TBAHeader .= $this->applicationVersionNumber;
 	}
 
 	public function getAppPath() {
@@ -22,6 +24,13 @@ class Settings {
 
 	public function getAppURL() {
 		return "//" . $_SERVER['SERVER_NAME'] . $this->applicationRoot;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getApplicationVersionNumber() {
+		return "" . $this->applicationVersionNumber;
 	}
 
 	public function getDbPrefix() {

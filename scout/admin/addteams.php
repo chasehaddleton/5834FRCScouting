@@ -1,8 +1,19 @@
 <?php
-require_once('../components/common.php');
+/**
+ * This file fills the Teams database with all FRC teams in the world. THIS NEED ONLY BE RUN ONCE.
+ */
+require_once('../../components/common.php');
 
 verifyPermission($_SESSION['level'], 2);
 set_time_limit(60);
+
+$query = "SELECT COUNT(teamNumber) AS numTeams FROM Teams";
+$result = executeSQLSingleRow($query, null);
+
+if ($result['numTeams'] > 0) {
+	echo "Team DB has already been filled.";
+	die();
+}
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

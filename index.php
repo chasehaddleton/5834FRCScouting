@@ -11,7 +11,7 @@ printNav();
 		<div class="row">
 			<div class="large-12 columns">
 				<h2>Welcome to <?php echo $setting->getApplicationName() ?>
-					<small>Version 0.01</small>
+					<small>Version <?php echo $setting->getApplicationVersionNumber() ?></small>
 				</h2>
 				<?php displayMsg(); ?>
 			</div>
@@ -34,7 +34,7 @@ printNav();
 		<div class="small-12 columns">
 			<h4>Team <?php echo $_SESSION['teamNumber'] ?>'s dashboard </h4>
 			<p>
-				Your team has <?php echo $team->getNumberOfScoutMembers(); ?> person registered for this app.
+				Your team has <?php echo $team->getNumberOfScoutMembers(); ?> person(s) registered for this app.
 				<br>
 				<small>
 					Click <a href="<?php echo $setting->getAppURL() ?>/team/">here</a> to see a directory.

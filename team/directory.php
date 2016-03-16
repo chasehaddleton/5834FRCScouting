@@ -25,7 +25,7 @@ $results = $stmt->fetchAll();
 					echo "<div class=\"accordion-content\" data-tab-content>";
 					echo "Email: " . $user['email'];
 					if (intval($user['phoneNumber']) != -1) {
-						echo "<br>Phone Number: " . $user['phoneNumber'];
+						echo "<br>Phone Number: " . formatPhoneNumber($user['phoneNumber']);
 					}
 					echo "</div>";
 					echo "</li>";

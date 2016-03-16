@@ -7,7 +7,7 @@ require_once($setting->getAppPath() . "/components/Authentication/User.php");
 
 
 function printHead($title) {
-	$setting = new Settings();
+	global $setting;
 	$title = ucwords($title . " - " . $setting->getApplicationName());
 	$appURL = $setting->getAppURL();
 
@@ -28,7 +28,7 @@ EOF;
 }
 
 function printNav() {
-	$setting = new Settings();
+	global $setting;
 	$appURL = $setting->getAppURL();
 	$appName = $setting->getApplicationName();
 
@@ -70,7 +70,7 @@ EOF;
 
 function printFooter() {
 	$date = date("Y");
-	$setting = new Settings();
+	global $setting;
 	$appURL = $setting->getAppURL();
 
 	$out = <<<EOF
@@ -102,7 +102,7 @@ EOF;
  * @param $requiredLevel int Required level to view page
  */
 function verifyPermission($userLevel, $requiredLevel) {
-	$setting = new Settings();
+	global $setting;
 
 	if (!isset($userLevel) || $userLevel < $requiredLevel) {
 		$_SESSION['errorMsg'] = "You are not authorized to be here, please sign in with an account that is authorized to view the page.";
@@ -145,7 +145,7 @@ function logMessage($message, $userId, $severity = 0) {
  * @return PDOStatement
  */
 function executeSQL($query, $query_params) {
-	$setting = new Settings();
+	global $setting;
 
 	if (strpos("FROM information_schema", $query) == false) {
 		preg_match("(FROM ([A-z]+))", $query, $matches, PREG_OFFSET_CAPTURE);
@@ -329,7 +329,7 @@ function displayTable($tableName, $limitPerPage, $pageNumber, $phpFileName, $edi
 		echo "<tr>";
 
 		foreach ($row as $col => $data) {
-			if ($col == "password") {
+			if (strtolower($col) == "password") {
 				$data = "<i>Confidential<i>";
 			}
 			echo "<td>$data</td>";
@@ -358,4 +358,24 @@ function displayTable($tableName, $limitPerPage, $pageNumber, $phpFileName, $edi
 function errorResponse($errorMsg, $errorCode) {
 	echo json_encode(new ScoutingAPI\Error($errorMsg, $errorCode));
 	die();
+}
+
+function formatPhoneNumber($phoneNumber) {
+	$phoneNumber = preg_replace("/[^0-9]/", "", $phoneNumber);
+	$length = strlen($phoneNumber);
+
+	switch ($length) {
+		case 7:
+			return preg_replace("/([0-9]{3})([0-9]{4})/", "$1-$2", $phoneNumber);
+			break;
+		case 10:
+			return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "($1) $2-$3", $phoneNumber);
+			break;
+		case 11:
+			return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "+$1 ($2) $3-$4", $phoneNumber);
+			break;
+		default:
+			return $phoneNumber;
+			break;
+	}
 }
