@@ -4,7 +4,7 @@ require_once('../components/common.php');
 // Check all page conditions.
 
 if ($_SERVER['REQUEST_METHOD'] != "POST") {
-	errorResponse("Error, must POST to this page.", 1);
+	errorResponse("Error, must POST to this page.", 1, 405);
 }
 
 $requiredPOSTKeys = array('email', 'password', 'name', 'teamNumber');

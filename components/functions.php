@@ -125,6 +125,23 @@ function verifyAPIKey($userKey, $userId, $teamNumber) {
 }
 
 /**
+ * Verify that the user is real and that they should have API access.
+ *
+ * @param $keyArr array GET or POST array containing the keys.
+ */
+function validateAPIAccess($keyArr) {
+	$requiredGETKeys = array('APIKey', 'userId', 'scoutTeamNumber');
+	if (count(array_diff($requiredGETKeys, array_keys($keyArr))) != 0) {
+		errorResponse("Error, apiKey and/or related data missing from request. Must provide APIKey, userId and teamNumber", 2, 401);
+	}
+
+
+	if (!verifyAPIKey($keyArr['APIKey'], $keyArr['userId'], $keyArr['scoutTeamNumber'])) {
+		errorResponse("API key is not valid", 12, 403);
+	}
+}
+
+/**
  * Redirect the user to a specified URL.
  *
  * @param $url string URL to redirect the user to.
@@ -368,8 +385,27 @@ function displayTable($tableName, $limitPerPage, $pageNumber, $phpFileName, $edi
  *
  * @param $errorMsg string Error message to include in JSON object.
  * @param $errorCode int Error code to send back in the JSON object.
+ * @param $httpStatus int Optional HTTP status code
  */
-function errorResponse($errorMsg, $errorCode) {
+function errorResponse($errorMsg, $errorCode, $httpStatus = 400) {
+	$httpHeader = "HTTP/1.1";
+
+	switch ($httpStatus) {
+		case 400:
+			$httpHeader .= " 400 Bad Request";
+			break;
+		case 401:
+			$httpHeader .= " 401 Unauthorized";
+			break;
+		case 403:
+			$httpHeader .= " 403 Forbidden";
+			break;
+		case 405:
+			$httpHeader .= " 405 Method Not Allowed";
+			break;
+	}
+
+	header($httpHeader);
 	echo json_encode(new ScoutingAPI\Error($errorMsg, $errorCode));
 	die();
 }
