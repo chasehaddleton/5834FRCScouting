@@ -32,6 +32,11 @@ class User {
 		$this->scoutTeamNumber = $this->userData['teamNumber'];
 	}
 
+	/**
+	 * Get a user's API key.
+	 *
+	 * @return string The user's API key
+	 */
 	public function getAPIKey() {
 		if (is_null($this->userData['APIKey']) || $this->userData['APIKey'] == "") {
 			$key = new APIKey($this->userData['userId'], $this->userData['teamNumber'], $this->userData['uniqId']);
@@ -44,10 +49,21 @@ class User {
 		return $this->APIKey;
 	}
 
+	/**
+	 * Check if the user exists.
+	 *
+	 * @return bool If the APIKey exists
+	 */
 	public function exists() {
 		return !isset($userData);
 	}
 
+	/**
+	 * Retrieve a value from the user's row.
+	 *
+	 * @param $name string Name of the field.
+	 * @return mixed Data requested.
+	 */
 	public function __get($name) {
 		return $this->userData[$name];
 	}
@@ -64,6 +80,9 @@ class User {
 		executeSQL($query, $query_params);
 	}
 
+	/**
+	 * Delete a user from the table.
+	 */
 	public function delete() {
 		$query = "DELETE FROM Users WHERE userId = :id";
 		$query_params = array(':id' => $this->userData['userId']);

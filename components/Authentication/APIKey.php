@@ -13,7 +13,9 @@ class APIKey {
 	}
 
 	/**
-	 * @return string
+	 * Get the API key from the class.
+	 *
+	 * @return string The API Key
 	 */
 	public function getKey() {
 		return $this->key;
