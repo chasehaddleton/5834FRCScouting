@@ -111,11 +111,25 @@ function verifyPermission($userLevel, $requiredLevel) {
 	}
 }
 
+/**
+ * Verify that the user's provided API key is valid.
+ *
+ * @param $userKey string Key provided from the user.
+ * @param $userId int User ID number
+ * @param $teamNumber int User's team number
+ * @return bool whether or not the API key is valid.
+ */
 function verifyAPIKey($userKey, $userId, $teamNumber) {
 	$genKey = new Authentication\APIKey($userId, $teamNumber);
 	return hash_equals($genKey, $userKey);
 }
 
+/**
+ * Redirect the user to a specified URL.
+ *
+ * @param $url string URL to redirect the user to.
+ * @param int $statusCode
+ */
 function redirect($url, $statusCode = 303) {
 	header('Location: ' . $url, true, $statusCode);
 	die();
