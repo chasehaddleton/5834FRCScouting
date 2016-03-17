@@ -3,7 +3,7 @@ class Settings {
 	protected $applicationRoot = "/scouting";
 	protected $applicationName = "Scoutr";
 	protected $applicationVersionNumber = 0.1;
-	protected $TBAHeader = "X-TBA-App-Id: 5834:scouting-site:v";
+	protected $TBAHeader = "X-TBA-App-Id: RedAlliance:";
 	protected $dbPrefix = "scouting";
 	protected $dbHost;
 	protected $dbName;
@@ -15,7 +15,7 @@ class Settings {
 		$this->dbName = "riverdalerobotics";
 		$this->username = "riverdalerobotic";
 		$this->password = "SnkkVC4MaVRbgcqx";
-		$this->TBAHeader .= $this->applicationVersionNumber;
+		$this->TBAHeader .= $this->applicationName . ":v" . $this->applicationVersionNumber;
 	}
 
 	public function getAppPath() {

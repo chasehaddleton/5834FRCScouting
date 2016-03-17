@@ -1,6 +1,8 @@
 <?php
 
 namespace Authentication;
+require_once("APIKey.php");
+
 /**
  * Class Users
  *
@@ -31,20 +33,15 @@ class User {
 	}
 
 	public function getAPIKey() {
-		$query = "SELECT apiKey FROM APIKey WHERE userId = :userId";
-		$query_params = array(':userId' => $this->userData['userId']);
-		$stmt = executeSQL($query, $query_params);
-		$row = $stmt->fetch();
-
-		if ($row) {
-			$this->APIKey = $row['apiKey'];
+		if (!is_null($this->userData['APIKey']) && $this->userData['APIKey'] != "") {
+			$this->APIKey = $this->userData['APIKey'];
 		} else {
 			$key = new APIKey($this->userData['userId'], $this->userData['teamNumber'], $this->userData['uniqId']);
-			$key->setAPIKey();
+			$this->__set("APIKey", $key->getKey());
 			$this->APIKey = $key;
 		}
 
-		return $this->APIKey;
+		return $key;
 	}
 
 	public function exists() {
@@ -62,14 +59,14 @@ class User {
 			$value = htmlspecialchars($value);
 		}
 
-		$query = "UPDATE Users SET $name = :value WHERE id = :id";
-		$query_params = array(':id' => $this->userData['id'], ':value' => $value);
+		$query = "UPDATE Users SET $name = :value WHERE userId = :id";
+		$query_params = array(':id' => $this->userData['userId'], ':value' => $value);
 		executeSQL($query, $query_params);
 	}
 
 	public function delete() {
-		$query = "DELETE FROM Users WHERE id = :id";
-		$query_params = array(':id' => $this->userData['id']);
+		$query = "DELETE FROM Users WHERE userId = :id";
+		$query_params = array(':id' => $this->userData['userId']);
 		executeSQL($query, $query_params);
 	}
 }
