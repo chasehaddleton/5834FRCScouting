@@ -24,6 +24,7 @@ if (!key_exists("type", $_GET)) {
 
 $towerSides = array('LEFT', 'CENTER', 'RIGHT');
 $towerGoals = array('TOP', 'BOTTOM');
+$defenseNames = array('PORTCULLIS', 'CHEVALDEFRISE', 'MOAT', 'RAMPARTS', 'DRAWBRIDGE', 'SALLYPORT', 'ROCKWALL', 'ROUGHTERRAIN');
 
 switch (strtoupper($_GET['type'])) {
 	case "SHOT":
@@ -68,7 +69,7 @@ switch (strtoupper($_GET['type'])) {
 		$query = "INSERT INTO Crossing (type, matchId, teamNumber, defenseName, scoutTeamNumber) VALUES (:matchId, :teamNumber, :defenseName, :scoutTeamNumber)";
 		$query_params = array(":matchId" => intval($_GET['matchId']), ":teamNumber" => intval($_GET['teamNumber']), ":scoutTeamNumber" => intval($_GET['scoutTeamNumber']));
 
-		if (!in_array(strtoupper($_GET['defenseName']), $towerSides, true)) {
+		if (!in_array(strtoupper($_GET['defenseName']), $defenseNames, true)) {
 			errorResponse("Error, malformed defense name in request.", 32);
 		}
 
