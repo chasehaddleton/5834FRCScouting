@@ -8,8 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] != "GET") {
 	errorResponse("Error, must GET to this page.", 2);
 }
 
-$requiredPOSTKeys = array('apiKey', 'userId', 'scoutTeamNumber');
-if (count(array_diff($requiredPOSTKeys, array_keys($_POST))) != 0) {
+$requiredGETKeys = array('apiKey', 'userId', 'scoutTeamNumber');
+if (count(array_diff($requiredGETKeys, array_keys($_POST))) != 0) {
 	errorResponse("Error, apiKey and/or related data missing from request. Must provide apiKey, userId and teamNumber", 2);
 }
 
@@ -24,26 +24,28 @@ if (!key_exists("type", $_GET)) {
 
 $towerSides = array('LEFT', 'CENTER', 'RIGHT');
 $towerGoals = array('TOP', 'BOTTOM');
+$defenseNames = array('PORTCULLIS' => 'PC', 'CHEVALDEFRISE' => 'CF', 'MOAT' => 'MT', 'RAMPARTS' => 'RP', 'DRAWBRIDGE' => 'DB', 'SALLYPORT' => 'SP', 'ROCKWALL' => 'RW', 'ROUGHTERRAIN' => 'RT', 'LOWBAR' => 'LB');
 
 switch (strtoupper($_GET['type'])) {
 	case "SHOT":
-		$requiredPOSTKeys = array('type', 'matchId', 'teamNumber', 'towerSide', 'towerGoal', 'scored', 'scoutTeamNumber');
-		if (count(array_diff($requiredPOSTKeys, array_keys($_GET))) != 0) {
-			errorResponse("Error, email and/or password is missing.", 31);
+		$requiredGETKeys = array('matchId', 'teamNumber', 'towerSide', 'towerGoal', 'scored', 'scoutTeamNumber');
+		
+		if (count(array_diff($requiredGETKeys, array_keys($_GET))) != 0) {
+			errorResponse("Error, fields required to add a shot are missing. Make sure to include 'type', 'matchId', 'teamNumber', 'towerSide', 'towerGoal', 'scored', and 'scoutTeamNumber'", 31);
 		}
 
 		$query = "INSERT INTO Shot (matchId, teamNumber, towerSide, towerGoal, scored, scoutTeamNumber) VALUES (:matchId, :teamNumber, :towerSide, :towerGoal, :scored, :scoutTeamNumber)";
 		$query_params = array(":matchId" => intval($_GET['matchId']), ":teamNumber" => intval($_GET['teamNumber']), ":scoutTeamNumber" => intval($_GET['scoutTeamNumber']));
 
-		$scored = (bool)$_GET['scored'];
+		$scored = (bool) $_GET['scored'];
 		$query_params[':scored'] = ($scored) ? 1 : 0;
 
 		if (!in_array(strtoupper($_GET['towerSide']), $towerSides, true)) {
-			errorResponse("Error, malformed tower side in request.", 32);
+			errorResponse("Error, malformed tower side in request. Valid options: 'LEFT', 'CENTER', 'RIGHT'", 32);
 		}
 
 		if (!in_array(strtoupper($_GET['towerGoal']), $towerGoals, true)) {
-			errorResponse("Error, malformed goal in request.", 32);
+			errorResponse("Error, malformed goal in request. Valid options: 'TOP', 'BOTTOM'", 32);
 		}
 
 		$query_params[':towerSide'] = strtoupper($_GET['towerSide']);
@@ -51,39 +53,63 @@ switch (strtoupper($_GET['type'])) {
 
 		executeSQL($query, $query_params);
 
-		$query = "SELECT count(shotId) AS numberScored FROM Shot WHERE teamNumber = :teamId AND matchId = :matchId AND scored = 1";
-		$query_params = array(':teamId' => intval($_GET['teamNumber']), ":matchId" => intval($_GET['matchId']));
-		$result = executeSQLSingleRow($query, $query_params);
-
-		$out = array("Addition" => "Successful", "");
+		$out = array("Addition" => "Successfully added");
 		echo json_encode($out);
 
 		break;
 	case "Crossing":
-		$requiredPOSTKeys = array('type', 'matchId', 'teamNumber', 'defenseName', 'scoutTeamNumber');
-		if (count(array_diff($requiredPOSTKeys, array_keys($_GET))) != 0) {
-			errorResponse("Error, email and/or password is missing.", 31);
+		$requiredGETKeys = array('matchId', 'teamNumber', 'defenseName', 'scoutTeamNumber');
+		if (count(array_diff($requiredGETKeys, array_keys($_GET))) != 0) {
+			errorResponse("Error, fields required to add a crossing are missing. Make sure to include 'matchId', 'teamNumber', 'defenseName', and 'scoutTeamNumber'", 31);
 		}
 
+		$query = "INSERT INTO Crossing (matchId, teamNumber, defenseName, scoutTeamNumber) VALUES (:matchId, :teamNumber, :defenseName, :scoutTeamNumber)";
+		$query_params = array(":matchId" => intval($_GET['matchId']), ":teamNumber" => intval($_GET['teamNumber']), ":scoutTeamNumber" => intval($_GET['scoutTeamNumber']));
+
+		if (!in_array(strtoupper($_GET['defenseName']), $defenseNames, true)) {
+			errorResponse("Error, malformed defense name in request. Valid options: 'PORTCULLIS', 'CHEVALDEFRISE', 'MOAT', 'RAMPARTS', 'DRAWBRIDGE', 'SALLYPORT', 'ROCKWALL', 'ROUGHTERRAIN', 'LOWBAR'", 32);
+		}
+
+		$query_params[':defenseName'] = $defenseNames[strtoupper($_GET['defenseName'])];
+
+		executeSQL($query, $query_params);
+
+		$out = array("Addition" => "Successfully added");
+		echo json_encode($out);
 
 		break;
 	case "Scale":
-		$requiredPOSTKeys = array('type', 'matchId', 'teamNumber', 'towerSide', 'scoutTeamNumber');
-		if (count(array_diff($requiredPOSTKeys, array_keys($_GET))) != 0) {
-			errorResponse("Error, email and/or password is missing.", 31);
+		$requiredGETKeys = array('matchId', 'teamNumber', 'towerSide', 'scoutTeamNumber');
+		if (count(array_diff($requiredGETKeys, array_keys($_GET))) != 0) {
+			errorResponse("Error, fields required to add a crossing are missing. Make sure to include 'matchId', 'teamNumber', 'towerSide', 'scoutTeamNumber'", 31);
 		}
 
-		if (!in_array(strtoupper($_GET['towerSide']), $towerSides, true)) {
-			errorResponse("Error, malformed tower side in request.", 32);
-		}
+        $query = "INSERT INTO Scale (matchId, teamNumber, towerSide, scoutTeamNumber) VALUES (:matchId, :teamNumber, :towerSide, :scoutTeamNumber)";
+        $query_params = array(":matchId" => intval($_GET['matchId']), ":teamNumber" => intval($_GET['teamNumber']), ":scoutTeamNumber" => intval($_GET['scoutTeamNumber']));
+
+        if (!in_array(strtoupper($_GET['towerSide']), $towerSides, true)) {
+            errorResponse("Error, malformed tower side in request.", 32);
+        }
+
+        executeSQL($query, $query_params);
+
+        $out = array("Addition" => "Successfully added");
+		echo json_encode($out);
 
 		break;
 	case "NOTE":
-		$requiredPOSTKeys = array('type', 'teamNumber', 'contents', 'scoutTeamNumber');
-		if (count(array_diff($requiredPOSTKeys, array_keys($_GET))) != 0) {
-			errorResponse("Error, email and/or password is missing.", 31);
+		$requiredGETKeys = array('teamNumber', 'contents', 'scoutTeamNumber');
+		if (count(array_diff($requiredGETKeys, array_keys($_GET))) != 0) {
+			errorResponse("Error, fields required to add a note are missing. Make sure to include 'teamNumber', 'contents', 'scoutTeamNumber'", 31);
 		}
 
+        $query = "INSERT INTO Notes (matchId, teamNumber, contents, scoutTeamNumber) VALUES (:matchId, :teamNumber, :contents, :scoutTeamNumber)";
+        $query_params = array(":matchId" => intval($_GET['matchId']), ":teamNumber" => intval($_GET['teamNumber']), ":scoutTeamNumber" => intval($_GET['scoutTeamNumber']), ':contents' => $_GET['contents']);
+
+        executeSQL($query, $query_params);
+
+        $out = array("Addition" => "Successfully added");
+		echo json_encode($out);
 
 		break;
 }
