@@ -91,9 +91,17 @@ switch (strtoupper($_GET['type'])) {
 			errorResponse("Error, email and/or password is missing.", 31);
 		}
 
-		if (!in_array(strtoupper($_GET['towerSide']), $towerSides, true)) {
-			errorResponse("Error, malformed tower side in request.", 32);
-		}
+        $query = "INSERT INTO Scale (type, matchId, teamNumber, towerSide, scoutTeamNumber) VALUES (:matchId, :teamNumber, :towerSide, :scoutTeamNumber)";
+        $query_params = array(":matchId" => intval($_GET['matchId']), ":teamNumber" => intval($_GET['teamNumber']), ":scoutTeamNumber" => intval($_GET['scoutTeamNumber']));
+
+        if (!in_array(strtoupper($_GET['towerSide']), $towerSides, true)) {
+            errorResponse("Error, malformed tower side in request.", 32);
+        }
+
+        $result = executeSQLSingleRow($query, $query_params);
+
+        $out = array("Addition" => "Successful", "");
+        echo json_encode($out);
 
 		break;
 	case "NOTE":
@@ -102,6 +110,17 @@ switch (strtoupper($_GET['type'])) {
 			errorResponse("Error, email and/or password is missing.", 31);
 		}
 
+        $query = "INSERT INTO Notes (type, teamNumber, contents, scoutTeamNumber) VALUES (:type, :teamNumber, :contents, :scoutTeamNumber)";
+        $query_params = array(":type" => intval($_GET['type']), ":teamNumber" => intval($_GET['teamNumber']), ":scoutTeamNumber" => intval($_GET['scoutTeamNumber']));
+
+        if (!isset($contents)) {
+            errorResponse("Error, malformed note contents in request.", 32);
+        }
+
+        $result = executeSQLSingleRow($query, $query_params);
+
+        $out = array("Addition" => "Successful", "");
+        echo json_encode($out);
 
 		break;
 }
