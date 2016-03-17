@@ -33,15 +33,15 @@ class User {
 	}
 
 	public function getAPIKey() {
-		if (!is_null($this->userData['APIKey']) && $this->userData['APIKey'] != "") {
-			$this->APIKey = $this->userData['APIKey'];
-		} else {
+		if (is_null($this->userData['APIKey']) || $this->userData['APIKey'] == "") {
 			$key = new APIKey($this->userData['userId'], $this->userData['teamNumber'], $this->userData['uniqId']);
 			$this->__set("APIKey", $key->getKey());
-			$this->APIKey = $key;
+			$this->APIKey = $key->getKey();
+		} else {
+			$this->APIKey = $this->userData['APIKey'];
 		}
 
-		return $key;
+		return $this->APIKey;
 	}
 
 	public function exists() {

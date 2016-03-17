@@ -14,23 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 			$_SESSION['level'] = $user->level;
 			$_SESSION['userId'] = $user->userId;
 			$_SESSION['teamNumber'] = $user->teamNumber;
-
-			error_log("Login | Session thinks ID is: " . $_SESSION['userId']);
+			$_SESSION['APIkey'] = $user->APIkey;
 
 			// Redirect to appropriate page.
-			if ($_SESSION['level'] > 0) {
-				logMessage("Successful login", $_SESSION['userId']);
-
-				redirect($setting->getAppURL());
-
-				die("Redirecting to: App");
-			} else {
-				logMessage("Successful login", $_SESSION['userId']);
-
-				redirect($setting->getAppURL());
-
-				die("Redirecting to: App");
-			}
+			logMessage("Successful login", $_SESSION['userId']);
+			redirect($setting->getAppURL());
+			die("Redirecting to: App");
 		}
 	}
 

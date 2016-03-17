@@ -5,7 +5,7 @@ require_once($setting->getAppPath() . '/components/Authentication/User.php');
 // Check all page conditions.
 
 if ($_SERVER['REQUEST_METHOD'] != "POST") {
-	errorResponse("Error, must POST to this page.", 1);
+	errorResponse("Error, must POST to this page.", 1, 405);
 }
 
 $requiredPOSTKeys = array('email', 'password');
@@ -28,4 +28,4 @@ if ($user->exists()) {
 	}
 }
 
-errorResponse("Error, bad login or user does not exist.", 11);
+errorResponse("Error, bad login or user does not exist.", 11, 401);
