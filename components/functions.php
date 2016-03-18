@@ -121,7 +121,7 @@ function verifyPermission($userLevel, $requiredLevel) {
  */
 function verifyAPIKey($userKey, $userId, $teamNumber) {
 	$genKey = new Authentication\APIKey($userId, $teamNumber);
-	return hash_equals($genKey, $userKey);
+	return hash_equals($genKey->getKey(), $userKey);
 }
 
 /**
@@ -134,7 +134,6 @@ function validateAPIAccess($keyArr) {
 	if (count(array_diff($requiredGETKeys, array_keys($keyArr))) != 0) {
 		errorResponse("Error, apiKey and/or related data missing from request. Must provide APIKey, userId and teamNumber", 2, 401);
 	}
-
 
 	if (!verifyAPIKey($keyArr['APIKey'], $keyArr['userId'], $keyArr['scoutTeamNumber'])) {
 		errorResponse("API key is not valid", 12, 403);

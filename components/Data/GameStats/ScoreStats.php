@@ -5,22 +5,24 @@ class ScoreStats {
 	public $high;
 	public $low;
 	public $percentage;
+	protected $scoutTeamNumber;
 
-	public function __construct($teamNumber, $matchId) {
+	public function __construct($teamNumber, $matchId, $scoutTeamNumber) {
+		$this->scoutTeamNumber = $scoutTeamNumber;
 		$this->shotStat($teamNumber, $matchId, "high", $this->high);
 		$this->shotStat($teamNumber, $matchId, "low", $this->low);
 		$this->percentage = ($this->high['scored'] + $this->low['scored']) / ($this->high['attempted'] + $this->low['attempted']);
 	}
 
-	private function shotStat($teamId, $matchId, $towerGoal, $results) {
+	private function shotStat($teamNumber, $matchId, $towerGoal, $results) {
 		$towerGoal = strtoupper($towerGoal);
 
-		$query = "SELECT count(shotId) AS numberAttempted FROM Shot WHERE teamNumber = :teamId AND matchId = :matchId AND towerGoal = :towerGoal";
-		$query_params = array(':teamId' => $teamId, ":matchId" => $matchId, ':towerGoal' => $towerGoal);
+		$query = "SELECT count(shotId) AS numberAttempted FROM Shot WHERE teamNumber = :teamId AND matchId = :matchId AND towerGoal = :towerGoal AND scoutTeamNumber = :scoutTeamNumber";
+		$query_params = array(':teamId' => $teamNumber, ":matchId" => $matchId, ':towerGoal' => $towerGoal, ':scoutTeamNumber' => $this->scoutTeamNumber);
 		$row = executeSQLSingleRow($query, $query_params);
 		$results["attempted"] = $row['numberAttempted'];
 
-		$query = "SELECT count(shotId) AS numberScored FROM Shot WHERE teamNumber = :teamId AND matchId = :matchId AND towerGoal = :towerGoal AND scored = 1";
+		$query = "SELECT count(shotId) AS numberScored FROM Shot WHERE teamNumber = :teamId AND matchId = :matchId AND towerGoal = :towerGoal AND scored = 1 AND scoutTeamNumber = :scoutTeamNumber";
 		$row = executeSQLSingleRow($query, $query_params);
 		$results["scored"] = $row['numberScored'];
 

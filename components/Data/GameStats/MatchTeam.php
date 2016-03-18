@@ -12,16 +12,20 @@ class MatchTeam {
 	public $scale;
 	public $crossing;
 
-	public function __construct($teamNumber, $matchNumber, $compKey) {
-		$this->teamNumber = $teamNumber;
-		$this->matchNumber = $matchNumber;
-		$this->compkey = $compKey;
+	public function __construct($teamNumber, $compKey, $matchNumber, $scoutTeamNumber) {
+		$teamNumber = intval($teamNumber);
+		$matchNumber = intval($matchNumber);
 
-		$query = "SELECT matchId FROM Matches WHERE compKey = :compkey AND matchNumber = :matchNum";
-		$query_params = array(':compKey' => $compKey, ':matchNum' => $matchNumber);
+		$query = "SELECT matchId FROM Matches WHERE compKey = :compKey AND matchNumber = :matchNumber";
+		$query_params = array(':compKey' => $compKey, ':matchNumber' => $matchNumber);
 		$result = executeSQLSingleRow($query, $query_params);
 		$matchId = $result['matchId'];
 
-		$this->scoring = new ScoreStats($teamNumber, $matchId);
+		$this->teamNumber = $teamNumber;
+		$this->matchNumber = $matchNumber;
+		$this->compKey = $compKey;
+		$this->scoring = new ScoreStats($teamNumber, $matchId, $scoutTeamNumber);
+		$this->crossing = new CrossingStats($teamNumber, $matchId, $scoutTeamNumber);
+		$this->scale = new ScaleStats($teamNumber, $matchId, $scoutTeamNumber);
 	}
 }
