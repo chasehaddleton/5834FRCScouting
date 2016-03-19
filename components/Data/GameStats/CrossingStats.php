@@ -1,6 +1,6 @@
 <?php
 namespace Data\GameStats;
-
+require_once("../../common.php");
 
 class CrossingStats {
 	public $defenses;

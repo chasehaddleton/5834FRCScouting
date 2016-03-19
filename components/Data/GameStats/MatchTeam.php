@@ -1,5 +1,6 @@
 <?php
 namespace Data\GameStats;
+require_once("../../common.php");
 require_once("ScoreStats.php");
 require_once("ScaleStats.php");
 require_once("CrossingStats.php");

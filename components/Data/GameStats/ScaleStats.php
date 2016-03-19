@@ -1,5 +1,6 @@
 <?php
 namespace Data\GameStats;
+require_once("../../common.php");
 
 class ScaleStats {
 	public $scale;
