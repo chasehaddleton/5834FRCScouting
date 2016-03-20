@@ -1,5 +1,6 @@
 <?php
 include_once("Settings.php");
+include_once("functions.php");
 $setting = new Settings();
 
 if (!isset($_SESSION)) {
@@ -17,4 +18,15 @@ try {
 }
 
 $self = $_SERVER['REQUEST_URI'];
-include_once($setting->getAppPath() . "/components/functions.php");
+
+class MyAutoloader {
+	public static function scoutrAutoload($class) {
+		global $setting;
+		$class = $setting->getAppPath() . $setting->getClassPath() . $class;
+		if (is_readable($class)) {
+			require_once($class);
+		}
+	}
+}
+
+set_include_path($setting->getAppPath() . $setting->getClassPath());

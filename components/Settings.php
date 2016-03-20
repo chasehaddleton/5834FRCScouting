@@ -4,6 +4,7 @@ class Settings {
 	protected $applicationName = "Scoutr";
 	protected $applicationVersionNumber = 0.2;
 	protected $TBAHeader = "X-TBA-App-Id: RedAlliance:";
+	protected $classPath = "/components";
 	protected $dbPrefix = "scouting";
 	protected $dbHost;
 	protected $dbName;
@@ -24,6 +25,13 @@ class Settings {
 
 	public function getAppURL() {
 		return "//" . $_SERVER['SERVER_NAME'] . $this->applicationRoot;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getClassPath() {
+		return $this->classPath;
 	}
 
 	/**
