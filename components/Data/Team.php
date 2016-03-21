@@ -16,22 +16,4 @@ class Team {
 
 		return $result['number'];
 	}
-
-	public function getNumberOfScored() {
-		$query = "SELECT COUNT(shotId) AS number FROM Users WHERE teamNumber = :teamNumber";
-		$query_params = array(':teamNumber' => $this->teamNumber);
-
-		$result = executeSQLSingleRow($query, $query_params);
-
-		return $result['number'];
-	}
-
-	public function getNumberOfScoredInMatch($matchId) {
-		$query = "SELECT COUNT(shotId) AS number FROM Users WHERE teamNumber = :teamNumber";
-		$query_params = array(':teamNumber' => $this->teamNumber);
-
-		$result = executeSQLSingleRow($query, $query_params);
-
-		return $result['number'];
-	}
 }

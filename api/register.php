@@ -1,14 +1,11 @@
 <?php
-require_once('../components/common.php');
+include_once($_SERVER['DOCUMENT_ROOT'] . "/scouting/components/common.php");
 
 // Check all page conditions.
-
 if ($_SERVER['REQUEST_METHOD'] != "POST") {
 	errorResponse("Error, must POST to this page.", 1, 405);
 }
-
 $requiredPOSTKeys = array('email', 'password', 'name', 'teamNumber');
-
 if (count(array_diff($requiredPOSTKeys, array_keys($_POST))) != 0) {
 	errorResponse("Error, must POST name, email, team number, and password", 10);
 }
@@ -28,11 +25,15 @@ if ($row) {
 // Prepare the password.
 $hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-$query = "INSERT INTO Users (fullName, email, teamNumber, password, uniqId, phoneNumber) VALUES (:name, :email, :teamNumber, :password, :uniqId, :phoneNumber)";
-$query_params = array(':name' => htmlspecialchars($_POST['name']), ':email' => htmlspecialchars($_POST['email']),
-	':teamNumber' => intVal($_POST['teamNumber']), ':password' => $hash, ':uniqId' => uniqid('', true),
-	':phoneNumber' => htmlspecialchars($_POST['phoneNumber']));
-
+$query = "INSERT INTO scoutingUsers (fullName, email, teamNumber, password, uniqId, phoneNumber) " .
+	" VALUES (:name, :email, :teamNumber, :password, :uniqId, :phoneNumber)";
+$query_params = array(
+	':name' => htmlspecialchars($_POST['name']),
+	':email' => htmlspecialchars($_POST['email']),
+	':teamNumber' => intVal($_POST['teamNumber']),
+	':password' => $hash, ':uniqId' => uniqid(mt_rand(), true),
+	':phoneNumber' => htmlspecialchars($_POST['phoneNumber'])
+);
 executeSQL($query, $query_params);
 
 $id = $db->lastInsertId();

@@ -33,6 +33,19 @@ class User {
 	}
 
 	/**
+	 * Retrieve a user's unique ID.
+	 *
+	 * @param $userId int User's ID.
+	 * @return string User's unique ID
+	 */
+	public static function getUniqueIdFromUserId($userId) {
+		$query = "SELECT uniqId FROM Users WHERE userId = :id";
+		$query_params = array(':id' => $userId);
+		$row = executeSQLSingleRow($query, $query_params);
+		return $row['uniqId'];
+	}
+
+	/**
 	 * Get a user's API key.
 	 *
 	 * @return string The user's API key

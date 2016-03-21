@@ -1,6 +1,8 @@
 <?php
-include_once("Settings.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/scouting/components/Settings.php");
 $setting = new Settings();
+
+include_once($setting->getAppPath() . "/components/functions.php");
 
 if (!isset($_SESSION)) {
 	session_start();
@@ -17,4 +19,3 @@ try {
 }
 
 $self = $_SERVER['REQUEST_URI'];
-include_once($setting->getAppPath() . "/components/functions.php");

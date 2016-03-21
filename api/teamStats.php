@@ -8,10 +8,10 @@ if ($_SERVER['REQUEST_METHOD'] != "GET") {
 }
 validateAPIAccess($_GET);
 
-$requiredPOSTKeys = array('compKey', 'teamNumber', 'matchNumber');
+$requiredPOSTKeys = array('compKey', 'teamNumber');
 
 if (count(array_diff($requiredPOSTKeys, array_keys($_GET))) != 0) {
-	errorResponse("Error, required fields are missing. Make sure to include 'compKey', 'teamNumber', and 'matchNumber'", 31);
+	errorResponse("Error, required fields are missing. Make sure to include 'compKey', and 'teamNumber'", 31);
 }
 
 echo json_encode(new Data\GameStats\MatchTeam($_GET['teamNumber'], $_GET['compKey'], $_GET['matchNumber'], $_GET['scoutTeamNumber']));

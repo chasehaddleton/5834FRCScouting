@@ -1,5 +1,6 @@
 <?php
 namespace Data\GameStats;
+require_once("../../common.php");
 
 class ScoreStats {
 	public $high;
@@ -17,12 +18,28 @@ class ScoreStats {
 	private function shotStat($teamNumber, $matchId, $towerGoal, $results) {
 		$towerGoal = strtoupper($towerGoal);
 
-		$query = "SELECT count(shotId) AS numberAttempted FROM Shot WHERE teamNumber = :teamId AND matchId = :matchId AND towerGoal = :towerGoal AND scoutTeamNumber = :scoutTeamNumber";
-		$query_params = array(':teamId' => $teamNumber, ":matchId" => $matchId, ':towerGoal' => $towerGoal, ':scoutTeamNumber' => $this->scoutTeamNumber);
+		$query = "SELECT count(shotId) AS numberAttempted
+					FROM Shot
+					WHERE teamNumber = :teamId
+					AND matchId = :matchId
+					AND scoutTeamNumber = :scoutTeamNumber
+					AND towerGoal = :towerGoal";
+		$query_params = array(
+			':teamId' => $teamNumber,
+			":matchId" => $matchId,
+			':towerGoal' => $towerGoal,
+			':scoutTeamNumber' => $this->scoutTeamNumber
+		);
 		$row = executeSQLSingleRow($query, $query_params);
 		$results["attempted"] = $row['numberAttempted'];
 
-		$query = "SELECT count(shotId) AS numberScored FROM Shot WHERE teamNumber = :teamId AND matchId = :matchId AND towerGoal = :towerGoal AND scored = 1 AND scoutTeamNumber = :scoutTeamNumber";
+		$query = "SELECT count(shotId) AS numberScored
+					FROM Shot
+					WHERE teamNumber = :teamId
+					AND matchId = :matchId
+					AND scoutTeamNumber = :scoutTeamNumber
+					AND towerGoal = :towerGoal
+					AND scored = 1";
 		$row = executeSQLSingleRow($query, $query_params);
 		$results["scored"] = $row['numberScored'];
 

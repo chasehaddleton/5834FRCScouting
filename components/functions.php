@@ -1,10 +1,7 @@
 <?php
-require_once("Settings.php");
-$setting = new Settings();
-require_once($setting->getAppPath() . "/components/common.php");
-require_once($setting->getAppPath() . "/components/ScoutingAPI/Error.php");
-require_once($setting->getAppPath() . "/components/Authentication/User.php");
-
+require_once("common.php");
+require_once("ScoutingAPI/Error.php");
+require_once("Authentication/User.php");
 
 function printHead($title) {
 	global $setting;
@@ -195,11 +192,8 @@ function executeSQL($query, $query_params) {
 		$stmt = $db->prepare($query);
 		$stmt->execute($query_params);
 	} catch (PDOException $ex) {
-		$_SESSION['errorMsg'] = "SQL Error, please try again or inform the webmaster.";
-
 		error_log("SQL error. Query: " . $query . "<br> Stack trace: " . $ex->getMessage());
-
-		die("SQL error.");
+		errorResponse("Error, malformed request resulted in an internal server error. ", 5);
 	}
 
 	return $stmt;
