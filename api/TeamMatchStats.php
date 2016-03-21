@@ -1,6 +1,6 @@
 <?php
-require_once('../components/common.php');
-require_once($setting->getAppPath() . '/components/Data/GameStats/MatchTeam.php');
+include_once($_SERVER['DOCUMENT_ROOT'] . "/scouting/components/common.php");
+require_once($setting->getAppPath() . $setting->getClassPath() . '/Data/GameStats/MatchTeam.php');
 
 // Check all page conditions.
 if ($_SERVER['REQUEST_METHOD'] != "GET") {

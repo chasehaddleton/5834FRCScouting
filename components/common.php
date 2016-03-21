@@ -1,7 +1,8 @@
 <?php
-include_once("Settings.php");
-include_once("functions.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/scouting/components/Settings.php");
 $setting = new Settings();
+
+include_once($setting->getAppPath() . "/components/functions.php");
 
 if (!isset($_SESSION)) {
 	session_start();
@@ -18,15 +19,3 @@ try {
 }
 
 $self = $_SERVER['REQUEST_URI'];
-
-class MyAutoloader {
-	public static function scoutrAutoload($class) {
-		global $setting;
-		$class = $setting->getAppPath() . $setting->getClassPath() . $class;
-		if (is_readable($class)) {
-			require_once($class);
-		}
-	}
-}
-
-set_include_path($setting->getAppPath() . $setting->getClassPath());

@@ -1,5 +1,5 @@
 <?php
-require_once("../components/common.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/scouting/components/common.php");
 
 verifyPermission($_SESSION['level'], 0);
 

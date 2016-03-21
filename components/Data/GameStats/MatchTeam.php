@@ -1,9 +1,6 @@
 <?php
 namespace Data\GameStats;
 require_once("../../common.php");
-require_once("ScoreStats.php");
-require_once("ScaleStats.php");
-require_once("CrossingStats.php");
 
 class MatchTeam {
 	public $teamNumber;
@@ -17,8 +14,14 @@ class MatchTeam {
 		$teamNumber = intval($teamNumber);
 		$matchNumber = intval($matchNumber);
 
-		$query = "SELECT matchId FROM Matches WHERE compKey = :compKey AND matchNumber = :matchNumber";
-		$query_params = array(':compKey' => $compKey, ':matchNumber' => $matchNumber);
+		$query = "SELECT matchId
+					FROM Matches
+					WHERE compKey = :compKey
+					AND matchNumber = :matchNumber";
+		$query_params = array(
+			':compKey' => $compKey,
+			':matchNumber' => $matchNumber
+		);
 		$result = executeSQLSingleRow($query, $query_params);
 		$matchId = $result['matchId'];
 

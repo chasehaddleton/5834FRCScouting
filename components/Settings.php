@@ -2,7 +2,7 @@
 class Settings {
 	protected $applicationRoot = "/scouting";
 	protected $applicationName = "Scoutr";
-	protected $applicationVersionNumber = 0.2;
+	protected $applicationVersionNumber = 0.3;
 	protected $TBAHeader = "X-TBA-App-Id: RedAlliance:";
 	protected $classPath = "/components";
 	protected $dbPrefix = "scouting";

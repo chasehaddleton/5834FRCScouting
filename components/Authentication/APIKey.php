@@ -6,9 +6,9 @@ class APIKey {
 	protected $key;
 
 	public function __construct($userId, $teamNumber) {
-		$user = new User($userId);
+		$uniqId = User::getUniqueIdFromUserId($userId);
 
-		$key = hash_hmac("sha512", $userId . $teamNumber, $user->uniqId . static::$API_KEY_PEPPER);
+		$key = hash_hmac("sha512", $userId . $teamNumber, $uniqId . static::$API_KEY_PEPPER);
 		$this->key = $key;
 	}
 
