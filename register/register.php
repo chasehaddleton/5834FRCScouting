@@ -6,7 +6,7 @@ if (!empty($_POST)) {
 	// Validate that the user entered an email.
 	if (empty($_POST['email'])) {
 		if (!empty($_POST['name'])) {
-			$submitted_fullname = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
+			$submitted_fullName = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
 		}
 
 		$_SESSION['errorMsg'] = "Please enter your email address.";
@@ -32,7 +32,7 @@ if (!empty($_POST)) {
 		}
 
 		if (!empty($_POST['name'])) {
-			$submitted_fullname = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
+			$submitted_fullName = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
 		}
 
 		$_SESSION['errorMsg'] = "Please enter a password.";
@@ -47,7 +47,7 @@ if (!empty($_POST)) {
 		}
 
 		if (!empty($_POST['name'])) {
-			$submitted_fullname = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
+			$submitted_fullName = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
 		}
 
 		$_SESSION['errorMsg'] = "Please enter a teamNumber.";
@@ -62,7 +62,7 @@ if (!empty($_POST)) {
 		}
 
 		if (!empty($_POST['name'])) {
-			$submitted_fullname = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
+			$submitted_fullName = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
 		}
 
 		$_SESSION['errorMsg'] = "The email address " . $_POST['email'] . " is invalid.";
@@ -85,7 +85,7 @@ if (!empty($_POST)) {
 		}
 
 		if (!empty($_POST['name'])) {
-			$submitted_fullname = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
+			$submitted_fullName = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
 		}
 
 		$_SESSION['errorMsg'] = "This email address is already registered";
@@ -100,7 +100,7 @@ if (!empty($_POST)) {
 		}
 
 		if (!empty($_POST['name'])) {
-			$submitted_fullname = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
+			$submitted_fullName = htmlentities($_POST['name'], ENT_QUOTES, 'UTF-8');
 		}
 
 		$_SESSION['errorMsg'] = "The entered passwords do not match.";

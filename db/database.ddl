@@ -22,7 +22,7 @@ CREATE TABLE scoutingUsers
 	email       VARCHAR(60)                        NOT NULL,
 	teamNumber  INT(11)                            NOT NULL,
 	password    VARCHAR(255)                       NOT NULL,
-	uniqId      VARCHAR(44)                        NOT NULL,
+	uniqId      VARCHAR(24)                        NOT NULL,
 	APIKey      VARCHAR(128),
 	level       TINYINT(4) DEFAULT '0'             NOT NULL,
 	phoneNumber VARCHAR(20) DEFAULT '-1',
@@ -42,7 +42,7 @@ CREATE TABLE scoutingMatches
 	blue1       INT(11)                            NOT NULL,
 	blue2       INT(11)                            NOT NULL,
 	blue3       INT(11)                            NOT NULL,
-	finals      TINYINT(1) DEFAULT '1',
+	finals      TINYINT(1) DEFAULT '1'             NOT NULL,
 	compKey     VARCHAR(10)                        NOT NULL,
 	matchNumber INT(11)                            NOT NULL,
 	CONSTRAINT scoutingMatches_scoutingTeams_blue1_fk FOREIGN KEY (blue1) REFERENCES scoutingTeams (teamNumber)
@@ -68,30 +68,38 @@ CREATE INDEX scoutingMatches_scoutingTeams_red1_fk_index ON scoutingMatches (red
 CREATE INDEX scoutingMatches_scoutingTeams_red2_fk_index ON scoutingMatches (red2);
 CREATE INDEX scoutingMatches_scoutingTeams_red3_fk_index ON scoutingMatches (red3);
 
-CREATE TABLE scoutingDefenses
+CREATE TABLE scoutingDefenseLineup
 (
-	defenseId       INT(11) PRIMARY KEY AUTO_INCREMENT                         NOT NULL,
-	matchId         INT(11)                                                    NOT NULL,
-	slot            ENUM('2', '3', '4', '5')                                   NOT NULL,
-	defenseName     ENUM('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
-	scoutTeamNumber INT(11)                                                    NOT NULL,
-	userId          INT(11)                                                    NOT NULL,
-	CONSTRAINT scoutingDefenses_scoutingUsers_userId_fk FOREIGN KEY (userId) REFERENCES scoutingUsers (userId)
+	defenseLineupId INT(11) PRIMARY KEY AUTO_INCREMENT                          NOT NULL,
+	matchId         INT(11)                                                     NOT NULL,
+	redSlot1        ENUM ('LB') DEFAULT 'LB'                                    NOT NULL,
+	redSlot2        ENUM ('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
+	redSlot3        ENUM ('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
+	redSlot4        ENUM ('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
+	redSlot5        ENUM ('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
+	blueSlot1       ENUM ('LB') DEFAULT 'LB'                                    NOT NULL,
+	blueSlot2       ENUM ('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
+	blueSlot3       ENUM ('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
+	blueSlot4       ENUM ('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
+	blueSlot5       ENUM ('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
+	scoutTeamNumber INT(11)                                                     NOT NULL,
+	userId          INT(11)                                                     NOT NULL,
+	CONSTRAINT scoutingDefenseLineup_scoutingUsers_userId_fk FOREIGN KEY (userId) REFERENCES scoutingUsers (userId)
 		ON DELETE NO ACTION
 );
-CREATE INDEX scoutingDefenses_scoutingUsers_userId_fk_index ON scoutingDefenses (userId);
-CREATE INDEX scoutingDefenses_scoutTeamNumber_index ON scoutingDefenses (scoutTeamNumber);
+CREATE INDEX scoutingDefenseLineup_scoutingUsers_userId_fk_index ON scoutingDefenseLineup (userId);
+CREATE INDEX scoutingDefenseLineup_scoutTeamNumber_index ON scoutingDefenseLineup (scoutTeamNumber);
 
 CREATE TABLE scoutingCrossing
 (
-	crossingId      INT(11) PRIMARY KEY AUTO_INCREMENT                         NOT NULL,
-	matchId         INT(11)                                                    NOT NULL,
-	teamNumber      INT(11)                                                    NOT NULL,
-	defenseName     ENUM('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') NOT NULL,
-	auto            TINYINT(1) DEFAULT '0',
-	assist          ENUM('NONE', 'OPEN', 'PUSH')                               NOT NULL,
-	scoutTeamNumber INT(11)                                                    NOT NULL,
-	userId          INT(11)                                                    NOT NULL,
+	crossingId      INT(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+	matchId         INT(11)                            NOT NULL,
+	teamNumber      INT(11)                            NOT NULL,
+	slot            ENUM ('1', '2', '3', '4', '5')     NOT NULL,
+	auto            TINYINT(1) DEFAULT '0'             NOT NULL,
+	assist          ENUM ('NONE', 'OPEN', 'PUSH')      NOT NULL,
+	scoutTeamNumber INT(11)                            NOT NULL,
+	userId          INT(11)                            NOT NULL,
 	CONSTRAINT scoutingCrossing_scoutingMatches_matchId_fk FOREIGN KEY (matchId) REFERENCES scoutingMatches (matchId)
 		ON DELETE CASCADE,
 	CONSTRAINT scoutingCrossing_scoutingTeams_teamNumber_fk FOREIGN KEY (teamNumber) REFERENCES scoutingTeams (teamNumber)
@@ -102,7 +110,7 @@ CREATE TABLE scoutingCrossing
 CREATE INDEX scoutingCrossing_scoutingMatches_matchId_fk_index ON scoutingCrossing (matchId);
 CREATE INDEX scoutingCrossing_scoutTeamNumber_index ON scoutingCrossing (scoutTeamNumber);
 CREATE INDEX scoutingCrossing_scoutingTeams_teamNumber_fk_index ON scoutingCrossing (teamNumber);
-CREATE INDEX scoutingCrossing_scoutingUsers_userId_fk_index ON scoutingDefenses (userId);
+CREATE INDEX scoutingCrossing_scoutingUsers_userId_fk_index ON scoutingCrossing (userId);
 
 CREATE TABLE scoutingScale
 (
@@ -110,7 +118,7 @@ CREATE TABLE scoutingScale
 	matchId         INT(11)                            NOT NULL,
 	teamNumber      INT(11)                            NOT NULL,
 	scoutTeamNumber INT(11)                            NOT NULL,
-	towerSide       ENUM('LEFT', 'CENTER', 'RIGHT')    NOT NULL,
+	towerSide       ENUM ('LEFT', 'CENTER', 'RIGHT')   NOT NULL,
 	userId          INT(11)                            NOT NULL,
 	CONSTRAINT scoutingScale_scoutingMatches_matchId_fk FOREIGN KEY (matchId) REFERENCES scoutingMatches (matchId)
 		ON DELETE CASCADE,
@@ -129,7 +137,7 @@ CREATE TABLE scoutingChallenge
 	challengeId     INT(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
 	matchId         INT(11)                            NOT NULL,
 	teamNumber      INT(11)                            NOT NULL,
-	towerSide       ENUM('LEFT', 'CENTER', 'RIGHT')    NOT NULL,
+	towerSide       ENUM ('LEFT', 'CENTER', 'RIGHT')   NOT NULL,
 	scoutTeamNumber INT(11)                            NOT NULL,
 	userId          INT(11)                            NOT NULL,
 	CONSTRAINT scoutingChallenge_scoutingMatches_matchId_fk FOREIGN KEY (matchId) REFERENCES scoutingMatches (matchId)
@@ -142,18 +150,20 @@ CREATE TABLE scoutingChallenge
 CREATE INDEX scoutingChallenge_scoutingMatches_matchId_fk_index ON scoutingChallenge (matchId);
 CREATE INDEX scoutingChallenge_scoutingTeams_teamNumber_fk_index ON scoutingChallenge (teamNumber);
 CREATE INDEX scoutingChallenge_scoutingUsers_userId_fk_index ON scoutingChallenge (userId);
+CREATE INDEX scoutingChallenge_scoutTeamNumber_index ON scoutingChallenge (scoutTeamNumber);
+
 
 CREATE TABLE scoutingShot
 (
 	shotId          INT(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
 	matchId         INT(11)                            NOT NULL,
 	teamNumber      INT(11)                            NOT NULL,
-	scored          TINYINT(1) DEFAULT '0',
-	auto            TINYINT(1) DEFAULT '0',
-	rampShot        TINYINT(1) DEFAULT '0',
-	towerSide       ENUM('LEFT', 'CENTER', 'RIGHT')    NOT NULL,
-	towerGoal       ENUM('HIGH', 'LOW')                NOT NULL,
-	scoutTeamNumber INT(11),
+	scored          TINYINT(1) DEFAULT '0'             NOT NULL,
+	auto            TINYINT(1) DEFAULT '0'             NOT NULL,
+	rampShot        TINYINT(1) DEFAULT '0'             NOT NULL,
+	towerSide       ENUM ('LEFT', 'CENTER', 'RIGHT')   NOT NULL,
+	towerGoal       ENUM ('HIGH', 'LOW')               NOT NULL,
+	scoutTeamNumber INT(11)                            NOT NULL,
 	userId          INT(11)                            NOT NULL,
 	CONSTRAINT scoutingShot_scoutingMatches_matchId_fk FOREIGN KEY (matchId) REFERENCES scoutingMatches (matchId)
 		ON DELETE CASCADE,
@@ -165,7 +175,7 @@ CREATE TABLE scoutingShot
 CREATE INDEX scoutingShot_scoutingMatches_matchId_fk_index ON scoutingShot (matchId);
 CREATE INDEX scoutingShot_scoutTeamNumber_index ON scoutingShot (scoutTeamNumber);
 CREATE INDEX scoutingShot_scoutingTeams_teamNumber_fk_index ON scoutingShot (teamNumber);
-CREATE INDEX scoutingShot_scoutingUsers_userId_fk_index ON scoutingScale (userId);
+CREATE INDEX scoutingShot_scoutingUsers_userId_fk_index ON scoutingShot (userId);
 
 CREATE TABLE scoutingAlliances
 (
@@ -176,7 +186,7 @@ CREATE TABLE scoutingAlliances
 	team2           INT(11)                            NOT NULL,
 	team3           INT(11)                            NOT NULL,
 	alt             INT(11),
-	scoutTeamNumber INT(11),
+	scoutTeamNumber INT(11)                            NOT NULL,
 	userId          INT(11)                            NOT NULL,
 	CONSTRAINT scoutingAlliances_scoutingEvents_compKey_fk FOREIGN KEY (compKey) REFERENCES scoutingEvents (compKey)
 		ON DELETE CASCADE,
@@ -191,13 +201,13 @@ CREATE TABLE scoutingAlliances
 	CONSTRAINT scoutingAlliances_scoutingUsers_userId_fk FOREIGN KEY (userId) REFERENCES scoutingUsers (userId)
 		ON DELETE NO ACTION
 );
-CREATE INDEX scoutingAlliances_scoutingTeams_alt_fk_index ON scoutingAlliances (alt);
-CREATE INDEX scoutingAlliances_scoutTeamNumber_index ON scoutingShot (scoutTeamNumber);
+CREATE INDEX scoutingAlliances_scoutTeamNumber_index ON scoutingAlliances (scoutTeamNumber);
 CREATE INDEX scoutingAlliances_scoutingEvents_compKey_fk_index ON scoutingAlliances (compKey);
 CREATE INDEX scoutingAlliances_scoutingTeams_team1_fk_index ON scoutingAlliances (team1);
 CREATE INDEX scoutingAlliances_scoutingTeams_team2_fk_index ON scoutingAlliances (team2);
 CREATE INDEX scoutingAlliances_scoutingTeams_team3_fk_index ON scoutingAlliances (team3);
-CREATE INDEX scoutingAlliances_scoutingUsers_userId_fk_index ON scoutingScale (userId);
+CREATE INDEX scoutingAlliances_scoutingTeams_alt_fk_index ON scoutingAlliances (alt);
+CREATE INDEX scoutingAlliances_scoutingUsers_userId_fk_index ON scoutingAlliances (userId);
 
 CREATE TABLE scoutingNotes
 (
@@ -217,7 +227,7 @@ CREATE TABLE scoutingNotes
 CREATE INDEX scoutingNotes_scoutingMatches_matchId_fk_index ON scoutingNotes (matchId);
 CREATE INDEX scoutingNotes_scoutTeamNumber_index ON scoutingNotes (scoutTeamNumber);
 CREATE INDEX scoutingNotes_scoutingMatches_teamNumber_fk_index ON scoutingNotes (teamNumber);
-CREATE INDEX scoutingNotes_scoutingUsers_userId_fk_index ON scoutingScale (userId);
+CREATE INDEX scoutingNotes_scoutingUsers_userId_fk_index ON scoutingNotes (userId);
 
 CREATE TABLE scoutingLogs
 (

@@ -1,5 +1,5 @@
 <?php
-include_once($_SERVER['DOCUMENT_ROOT'] . "/scouting/components/common.php");
+require_once(dirname(dirname(__DIR__)) . "/common.php");
 
 verifyPermission($_SESSION['level'], 0);
 
@@ -8,7 +8,7 @@ printNav();
 ?>
 	<div class="row">
 		<div class="small-12 columns">
-			<h3><?php echo $setting->getApplicationName() ?></h3>
+			<h3><?php echo $setting::applicationName ?></h3>
 			<p>
 				Welcome to our API! To learn how to use our API, please view our documentation on GitHub here.
 			</p>
