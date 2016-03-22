@@ -1,12 +1,22 @@
 <?php
 
 namespace Authentication;
+require_once(dirname(dirname(dirname(__DIR__))) . "/common.php");
 require_once("APIKey.php");
 
 /**
  * Class Users
  *
  * This class defines the basic structure for a site user.
+ *
+ * @property string userId
+ * @property string fullName
+ * @property string teamNumber
+ * @property string password
+ * @property string uniqId
+ * @property string APIKey
+ * @property string level
+ * @property string phoneNumber
  */
 class User {
 	public $userId;
@@ -44,6 +54,44 @@ class User {
 		$row = executeSQLSingleRow($query, $query_params);
 		return $row['uniqId'];
 	}
+	
+	public static function create($name, $email, $teamNumber, $password, $phoneNumber) {
+		global $db;
+		
+		$query = "SELECT 1 FROM Users WHERE email = :email";
+		$query_params = array(':email' => $email);
+		$row = executeSQLSingleRow($query, $query_params);
+		
+		// Return an error message if the email address is already in use.
+		if ($row) {
+			errorResponse("Error, This email address is already registered", 11);
+		}
+		
+		// Prepare the password.
+		$query = "INSERT INTO scoutingUsers (fullName, email, teamNumber, password, uniqId, phoneNumber) " .
+			" VALUES (:name, :email, :teamNumber, :password, :uniqId, :phoneNumber)";
+		$query_params = array(
+			':name' => htmlspecialchars(ucwords($name)),
+			':email' => htmlspecialchars(strtolower($email)),
+			':teamNumber' => intval($teamNumber),
+			':password' => password_hash($password, PASSWORD_DEFAULT),
+			':uniqId' => User::genNewUniqueId(),
+			':phoneNumber' => preg_replace("([^0-9])", "", $phoneNumber)
+		);
+		executeSQL($query, $query_params);
+		
+		$id = $db->lastInsertId();
+		logMessage("Account created through API", $id);
+	}
+	
+	/**
+	 * Generate a new unique ID.
+	 *
+	 * @return string A new unique ID
+	 */
+	public static function genNewUniqueId() {
+		return uniqid(mt_rand(), true);
+	}
 
 	/**
 	 * Get a user's API key.
@@ -51,7 +99,7 @@ class User {
 	 * @return string The user's API key
 	 */
 	public function getAPIKey() {
-		if (is_null($this->userData['APIKey']) || $this->userData['APIKey'] == "") {
+		if (is_null($this->userData['APIKey']) || $this->userData['APIKey'] == "" || intval($this->userData['APIKey']) < 0) {
 			$key = new APIKey($this->userData['userId'], $this->userData['teamNumber'], $this->userData['uniqId']);
 			$this->__set("APIKey", $key->getKey());
 			$this->APIKey = $key->getKey();

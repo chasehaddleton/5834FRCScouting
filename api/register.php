@@ -1,5 +1,6 @@
 <?php
-include_once($_SERVER['DOCUMENT_ROOT'] . "/scouting/components/common.php");
+require_once(dirname(dirname(__DIR__)) . "/common.php");
+require_once($setting->getAppPath() . $setting::classPath . "Authentication/User.php");
 
 // Check all page conditions.
 if ($_SERVER['REQUEST_METHOD'] != "POST") {
@@ -12,32 +13,7 @@ if (count(array_diff($requiredPOSTKeys, array_keys($_POST))) != 0) {
 
 // Do the stuff for this page.
 
-$query = "SELECT 1 FROM Users WHERE email = :email";
-$query_params = array(':email' => $_POST['email']);
-
-$row = executeSQLSingleRow($query, $query_params);
-
-// Return an error message if the email address is already in use.
-if ($row) {
-	errorResponse("Error, This email address is already registered", 11);
-}
-
-// Prepare the password.
-$hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-$query = "INSERT INTO scoutingUsers (fullName, email, teamNumber, password, uniqId, phoneNumber) " .
-	" VALUES (:name, :email, :teamNumber, :password, :uniqId, :phoneNumber)";
-$query_params = array(
-	':name' => htmlspecialchars($_POST['name']),
-	':email' => htmlspecialchars($_POST['email']),
-	':teamNumber' => intVal($_POST['teamNumber']),
-	':password' => $hash, ':uniqId' => uniqid(mt_rand(), true),
-	':phoneNumber' => htmlspecialchars($_POST['phoneNumber'])
-);
-executeSQL($query, $query_params);
-
-$id = $db->lastInsertId();
-logMessage("Account created through API", $id);
+Authentication\User::create($_POST['name'], $_POST['email'], $_POST['teamNumber'], $_POST['password'], $_POST['phoneNumber']);
 
 $out = array("Success");
 echo json_encode($out);
