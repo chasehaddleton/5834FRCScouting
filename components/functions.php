@@ -1,11 +1,11 @@
 <?php
-require_once("common.php");
+require_once(dirname(dirname(__DIR__)) . "/common.php");
 require_once("ScoutingAPI/Error.php");
 require_once("Authentication/User.php");
 
 function printHead($title) {
 	global $setting;
-	$title = ucwords($title . " - " . $setting->getApplicationName());
+	$title = ucwords($title . " - " . $setting::applicationName);
 	$appURL = $setting->getAppURL();
 
 	echo <<<EOF
@@ -27,7 +27,7 @@ EOF;
 function printNav() {
 	global $setting;
 	$appURL = $setting->getAppURL();
-	$appName = $setting->getApplicationName();
+	$appName = $setting::applicationName;
 
 	$out = <<<EOF
 		<div class="title-bar" data-responsive-toggle="site-menu" data-hide-for="medium">
@@ -169,7 +169,7 @@ function logMessage($message, $userId, $severity = 0) {
  *
  * @param string $query The SQL query that you would like to run.
  * @param array $query_params Parameters for the SQL query.
- * @return PDOStatement
+ * @return PDOStatement executed query statement.
  */
 function executeSQL($query, $query_params) {
 	global $setting;
@@ -182,7 +182,7 @@ function executeSQL($query, $query_params) {
 		if (empty($matches)) {
 			preg_match("(UPDATE ([A-z]+))", $query, $matches, PREG_OFFSET_CAPTURE);
 		}
-		$query = substr_replace($query, $setting->getDbPrefix(), $matches[1][1], 0);
+		$query = substr_replace($query, $setting::dbPrefix, $matches[1][1], 0);
 	}
 
 	$stmt = null;
@@ -204,7 +204,7 @@ function executeSQL($query, $query_params) {
  *
  * @param $query string The SQL query that you would like to run.
  * @param $query_params array Parameters for the SQL query.
- * @return mixed
+ * @return PDORow first row from the query.
  */
 function executeSQLSingleRow($query, $query_params) {
 	$stmt = executeSQL($query, $query_params);

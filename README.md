@@ -1,7 +1,7 @@
 # FRC Stronghold Scouting Site
 
 ## API
-API is currently located at riverdalerobotics.com/scouting/api
+API is currently located at https://riverdalerobotics.com/scouting/api
 
 ### Registration
 Registration can be made through the API by POSTing to api/registration.php
@@ -45,13 +45,44 @@ Request should be of type POST made with the following keys:
 ```
 
 ### Normal Requests
-Every other request (besides the ones made to the authentication page) should be made with the following keys:
+Every other request (besides the ones made to the authentication and registration pages) should be made with the following keys:
 
 | POST Key        | Description                                   |
 |-----------------|-----------------------------------------------|
 | apiKey          | User's API key                                |
 | userId          | ID of a user (from the authentication object) |
 | scoutTeamNumber | User's FRC team number                        |
+
+### Adding Game Action
+Adding a game action can be done through the api/add.php page. 
+Different add actions require different POST keys, but all require the following (in addition to the keys required for a normal request):
+ 
+| POST Key        | Description                                         |
+|-----------------|-----------------------------------------------------|
+| type            | The type of game action to add                      |
+| compKey         | The key for the competition                         |
+| matchNumber     | The match number at the competition                 |
+| teamNumber      | The number of the team you are adding an action for |
+
+#### Shot
+To add a shot, the following keys are required:
+
+| POST Key        | type                            |Description                                                         |
+|-----------------|---------------------------------|--------------------------------------------------------------------|
+| scored          | boolean                         | Whether or not the team was successful in scoring                  |
+| auto            | boolean                         | Whether or not the shot was made during autonomous                 |
+| rampShot        | boolean                         | Whether or not the shot was made from the bottom of the tower ramp |
+| towerSide       | ENUM('LEFT', 'CENTER', 'RIGHT') | What side of the tower the shot was made from                      |
+| towerGoal       | ENUM('HIGH', 'LOW')             | Which goal position the shot was made to                           |
+
+#### Crossing
+To add a crossing, the following keys are required:
+
+| POST Key        | type                                                       |Description                                                         |
+|-----------------|------------------------------------------------------------|--------------------------------------------------------------------|
+| defenseName     | ENUM('PC', 'CF', 'RP', 'MT', 'DB', 'SP', 'RW', 'RT', 'LB') | The name of the defense that the team crossed                      |
+| auto            | boolean                                                    | Whether or not the shot was made during autonomous                 |
+| assist          | ENUM('NONE', 'OPEN', 'PUSH')                               | Was assistance required? What type?                                |
 
 ## Errors
 The API returns a standard error object for any errors encountered.
@@ -61,7 +92,7 @@ The API returns a standard error object for any errors encountered.
     {"msg":"Error, must POST name, email, team number, and password","code":10}
 ```
 
-### Error Codes ##
+### Error Codes
 #### Less than 10
 Access error
 #### 20s 
