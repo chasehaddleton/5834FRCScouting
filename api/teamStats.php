@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(dirname(__DIR__)) . "/common.php");
+require_once("../common.php");
 require_once($setting->getAppPath() . $setting::classPath . '/Data/GameStats/MatchTeam.php');
 
 // Check all page conditions.

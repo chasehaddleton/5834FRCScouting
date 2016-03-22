@@ -1,6 +1,6 @@
 <?php
 namespace Data\GameStats;
-require_once(dirname(dirname(dirname(dirname(__DIR__)))) . "/common.php");
+require_once("../../../common.php");
 
 class MatchTeam {
 	public $teamNumber;
