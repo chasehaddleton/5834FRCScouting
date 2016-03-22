@@ -1,6 +1,6 @@
 <?php
 namespace Data;
-require_once(dirname(dirname(dirname(__DIR__))) . "/common.php");
+require_once(dirname(dirname(__DIR__)) . "/common.php");
 
 class Team {
 	private $teamNumber;

@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(dirname(__DIR__)) . "/common.php");
+require_once(dirname(__DIR__) . "/common.php");
 require_once("ScoutingAPI/Error.php");
 require_once("Authentication/User.php");
 
