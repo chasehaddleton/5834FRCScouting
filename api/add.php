@@ -1,5 +1,5 @@
 <?php
-require_once("../common.php");
+require_once(dirname(__DIR__) . "/common.php");
 require_once($setting->getAppPath() . $setting::classPath . "Data/GameAction/Challenge.php");
 require_once($setting->getAppPath() . $setting::classPath . "Data/GameAction/Crossing.php");
 require_once($setting->getAppPath() . $setting::classPath . "Data/GameAction/Note.php");

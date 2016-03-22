@@ -1,6 +1,6 @@
 <?php
 namespace Data\GameStats;
-require_once("../../../common.php");
+require_once(dirname(dirname(dirname(__DIR__))) . "/common.php");
 
 class CrossingStats {
 	public $defenses;
