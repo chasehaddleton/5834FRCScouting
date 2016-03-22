@@ -1,8 +1,7 @@
 <?php
 
 namespace Data\GameAction;
-require_once(dirname(dirname(dirname(dirname(__DIR__)))) . "/common.php");
-
+require_once("../../../common.php");
 class Scale {
 	public $scaleId;
 	protected $objectFields;

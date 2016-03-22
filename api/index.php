@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(dirname(__DIR__)) . "/common.php");
+require_once("../common.php");
 
 verifyPermission($_SESSION['level'], 0);
 
