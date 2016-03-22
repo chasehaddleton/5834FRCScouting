@@ -1,7 +1,7 @@
 <?php
-
 namespace Data\GameAction;
-require_once("../../../common.php");
+require_once(dirname(dirname(dirname(__DIR__))) . "/common.php");
+
 class Note {
 	public $noteId;
 	protected $objectFields;
